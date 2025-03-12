@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'payment.dart'
 
 class BookAppointmentPage extends StatefulWidget {
   final String doctorName;
