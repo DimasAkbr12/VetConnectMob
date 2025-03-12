@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(top: 80), // Sesuaikan posisi
               child: Image.asset(
-                "assets/images/dokter.png", // Sesuaikan path gambar
+                "assets/dokter.jpg", // Sesuaikan path gambar
                 width: 250, // Ukuran gambar
               ),
             ),
