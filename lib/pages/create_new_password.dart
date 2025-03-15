@@ -72,22 +72,32 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
             ),
             const SizedBox(height: 30),
 
-            // Tombol Next
+            // Next Button
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
                   if (_newPasswordController.text.isEmpty || _confirmPasswordController.text.isEmpty) {
+                    // Show error if fields are empty
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Please enter all fields!")),
                     );
                   } else if (_newPasswordController.text != _confirmPasswordController.text) {
+                    // Show error if passwords do not match
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Passwords do not match!")),
                     );
                   } else {
-                    Navigator.pushNamed(context, '/sign-in'); // Use named route
+                    // Show success message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Password successfully updated!')),
+                    );
+
+                    // Navigate to the login page after 2 seconds
+                    Future.delayed(const Duration(seconds: 2), () {
+                      Navigator.pushNamed(context, '/sign-in');
+                    });
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -108,7 +118,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
     );
   }
 
-  // Widget Input Password dengan Toggle Visibility
+  // Widget for Password Input with Toggle Visibility
   Widget _buildPasswordInput({
     required String label,
     required String hint,

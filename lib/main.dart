@@ -3,7 +3,7 @@ import 'package:flutter_application_1/pages/create_new_password.dart';
 import 'package:flutter_application_1/pages/detail_dokter.dart';
 import 'package:flutter_application_1/pages/forgot_password.dart';
 import 'package:flutter_application_1/pages/get_started_screen.dart';
-import 'package:flutter_application_1/pages/home_page.dart'; // Add HomePage
+import 'package:flutter_application_1/pages/home_page.dart'; 
 import 'package:flutter_application_1/pages/register_page.dart';
 import 'package:flutter_application_1/pages/signin_page.dart';
 import 'package:flutter_application_1/pages/splash_screen.dart';
