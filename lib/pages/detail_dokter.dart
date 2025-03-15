@@ -37,11 +37,11 @@ class DetailPage extends StatelessWidget {
                 child: Stack(
                   children: [
                     // Doctor Image
-                    Container(
+                    SizedBox(
                       height: 300,
                       width: double.infinity,
-                      child: Image.network(
-                        'https://example.com/doctor_image.jpg', // Replace with actual image URL
+                      child: Image.asset(
+                        'assets/images/image.png', 
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -56,7 +56,7 @@ class DetailPage extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.6),
                         ),
-                        child: Column(
+                        child: const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -87,27 +87,27 @@ class DetailPage extends StatelessWidget {
               // Rating and Recommend section
               Row(
                 children: [
-                  Icon(Icons.star, color: Colors.amber, size: 20),
+                  const Icon(Icons.star, color: Colors.amber, size: 20),
                   const SizedBox(width: 4),
-                  Text(
+                  const Text(
                     '4,8 Star',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.blue),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(
                           Icons.verified,
                           color: Colors.blue,
                           size: 18,
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(
                           'Recommend',
                           style: TextStyle(
@@ -124,7 +124,7 @@ class DetailPage extends StatelessWidget {
               const SizedBox(height: 16),
               
               // Doctor description
-              Text(
+              const Text(
                 'Drh. Joko Susanto adalah seorang dokter hewan yang berpengalaman dalam menangani berbagai jenis hewan peliharaan, termasuk anjing, kucing, dan hewan domestik lainnya. Beliau telah berpraktik selama 19 tahun dan memiliki tingkat kepuasan pasien sebesar 100%.',
                 style: TextStyle(
                   fontSize: 15,
@@ -139,30 +139,30 @@ class DetailPage extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(Icons.calendar_today, size: 16, color: Colors.black54),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         Text('6 year'),
                       ],
                     ),
                   ),
                   const SizedBox(width: 10),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(Icons.thumb_up, size: 16, color: Colors.black54),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         Text('99.0%'),
                       ],
                     ),
@@ -173,7 +173,7 @@ class DetailPage extends StatelessWidget {
               const SizedBox(height: 16),
               
               // Price
-              Text(
+              const Text(
                 'Rp 75.000',
                 style: TextStyle(
                   fontSize: 24,
@@ -184,7 +184,7 @@ class DetailPage extends StatelessWidget {
               const SizedBox(height: 12),
               
               // Expert field
-              Text(
+              const Text(
                 'Expert field',
                 style: TextStyle(
                   fontSize: 16,
@@ -201,28 +201,28 @@ class DetailPage extends StatelessWidget {
                 runSpacing: 8,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey[400]!),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text('Dog & Cat'),
+                    child: const Text('Dog & Cat'),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey[400]!),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text('Farm Animals'),
+                    child: const Text('Farm Animals'),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey[400]!),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text('Domestic & Exotic Animal'),
+                    child: const Text('Domestic & Exotic Animal'),
                   ),
                 ],
               ),
@@ -235,7 +235,7 @@ class DetailPage extends StatelessWidget {
                 children: [
                   Icon(Icons.school, color: Colors.blueGrey[700], size: 24),
                   const SizedBox(width: 12),
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -246,7 +246,7 @@ class DetailPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(
                           'University Syiah Kuala, 2018',
                           style: TextStyle(
@@ -268,7 +268,7 @@ class DetailPage extends StatelessWidget {
                 children: [
                   Icon(Icons.location_on, color: Colors.blueGrey[700], size: 24),
                   const SizedBox(width: 12),
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -279,7 +279,7 @@ class DetailPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(
                           'Kab. Agam, West Sumatra',
                           style: TextStyle(
@@ -301,7 +301,7 @@ class DetailPage extends StatelessWidget {
                 children: [
                   Icon(Icons.numbers, color: Colors.blueGrey[700], size: 24),
                   const SizedBox(width: 12),
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -312,7 +312,7 @@ class DetailPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(
                           '2030018490520230528',
                           style: TextStyle(
@@ -340,13 +340,13 @@ class DetailPage extends StatelessWidget {
                         builder: (context) => BookAppointmentPage(
                           doctorName: 'Drh. Joko Susanto',
                           specialization: 'Veterinarian',
-                          imageUrl: 'https://example.com/doctor_image.jpg', // Use same image URL
+                          imageUrl: 'assets/images/image.png', // Changed to use asset path
                         ),
                       ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF497D74),
+                    backgroundColor: const Color(0xFF497D74),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

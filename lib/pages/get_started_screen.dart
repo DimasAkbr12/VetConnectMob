@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'signin_page.dart'; // Import halaman Sign In
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class GetStartedScreen extends StatelessWidget {
+  const GetStartedScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +15,11 @@ class HomeScreen extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color(0xFFD1D5D8), // Abu-abu terang
-                  Color(0xFFB0C4B1), // Abu-abu dengan sedikit hijau
-                  Color(0xFF497D74), // Hijau gelap di bawah
+                  Color.fromARGB(255, 10, 89, 59), // Abu-abu dengan sedikit hijau
+                  Color.fromARGB(71, 2, 50, 21), // Hijau gelap di bawah
                 ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
               ),
             ),
           ),
@@ -30,10 +28,10 @@ class HomeScreen extends StatelessWidget {
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.only(top: 80), // Sesuaikan posisi
+              padding: const EdgeInsets.only(top: 180), // Sesuaikan posisi
               child: Image.asset(
-                "assets/dokter.jpg", // Sesuaikan path gambar
-                width: 250, // Ukuran gambar
+                "assets/images/dokter.jpg", // Sesuaikan path gambar
+                width: 450, // Ukuran gambar
               ),
             ),
           ),
@@ -65,14 +63,11 @@ class HomeScreen extends StatelessWidget {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SignInPage()),
-                        );
+                        Navigator.pushNamed(context, '/sign-in');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF497D74), // Warna hijau sesuai gambar
-                        foregroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 255, 255, 255),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
