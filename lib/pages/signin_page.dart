@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'signup_page.dart';
-import 'forgot_password.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -31,19 +29,34 @@ class SignInPageState extends State<SignInPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 50),
-                    const Text(
-                      'Welcome Back!',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    // Centered Welcome Text
+                    const Center(
+                      child: Text(
+                        'Welcome Back!',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      'Sign in to continue',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    // Centered Subtitle Text
+                    const Center(
+                      child: Text(
+                        'Sign in to continue',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
                     ),
                     const SizedBox(height: 30),
 
                     // Email Input
-                    const Text('Email', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Email',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _emailController,
@@ -51,13 +64,19 @@ class SignInPageState extends State<SignInPage> {
                       decoration: InputDecoration(
                         hintText: 'Enter your email',
                         prefixIcon: const Icon(Icons.email_outlined),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
                         filled: true,
                         fillColor: Colors.grey[200],
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'Email tidak boleh kosong';
-                        if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value)) {
+                        if (value == null || value.isEmpty)
+                          return 'Email tidak boleh kosong';
+                        if (!RegExp(
+                          r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                        ).hasMatch(value)) {
                           return 'Format email tidak valid';
                         }
                         return null;
@@ -67,7 +86,13 @@ class SignInPageState extends State<SignInPage> {
                     const SizedBox(height: 20),
 
                     // Password Input
-                    const Text('Password', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Password',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _passwordController,
@@ -76,20 +101,29 @@ class SignInPageState extends State<SignInPage> {
                         hintText: 'Enter your password',
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
-                          icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
                           onPressed: () {
                             setState(() {
                               _obscurePassword = !_obscurePassword;
                             });
                           },
                         ),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
                         filled: true,
                         fillColor: Colors.grey[200],
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'Password tidak boleh kosong';
-                        if (value.length < 6) return 'Password harus minimal 6 karakter';
+                        if (value == null || value.isEmpty)
+                          return 'Password tidak boleh kosong';
+                        if (value.length < 6)
+                          return 'Password harus minimal 6 karakter';
                         return null;
                       },
                     ),
@@ -99,9 +133,15 @@ class SignInPageState extends State<SignInPage> {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPasswordPage()));
+                          Navigator.pushNamed(
+                            context,
+                            '/forgot-password',
+                          ); // Use named route
                         },
-                        child: const Text('Forgot Password?', style: TextStyle(color: Color(0xFF497D74))),
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(color: Color(0xFF497D74)),
+                        ),
                       ),
                     ),
 
@@ -114,17 +154,23 @@ class SignInPageState extends State<SignInPage> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            // TODO: Implementasi logika Sign In
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Login berhasil!')),
-                            );
+                            // Navigate to Home Page
+                            Navigator.pushReplacementNamed(
+                              context,
+                              '/home',
+                            ); // Replace current route
                           }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF497D74),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                        child: const Text('Sign In', style: TextStyle(fontSize: 16, color: Colors.white)),
+                        child: const Text(
+                          'Sign In',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
                       ),
                     ),
 
@@ -136,7 +182,10 @@ class SignInPageState extends State<SignInPage> {
                         Expanded(child: Divider(color: Colors.grey[300])),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text('OR', style: TextStyle(color: Colors.grey[600])),
+                          child: Text(
+                            'OR',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
                         ),
                         Expanded(child: Divider(color: Colors.grey[300])),
                       ],
@@ -152,11 +201,20 @@ class SignInPageState extends State<SignInPage> {
                         onPressed: () {
                           // TODO: Implementasi Google Sign In
                         },
-                        icon: Image.asset('assets/google_logo.png', height: 24, width: 24),
-                        label: const Text('Sign in with Google', style: TextStyle(color: Colors.black87)),
+                        icon: Image.asset(
+                          'assets/images/google.png',
+                          height: 24,
+                          width: 24,
+                        ),
+                        label: const Text(
+                          'Sign in with Google',
+                          style: TextStyle(color: Colors.black87),
+                        ),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(color: Colors.grey[300]!),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
                     ),
@@ -170,9 +228,18 @@ class SignInPageState extends State<SignInPage> {
                         const Text('Don\'t have an account?'),
                         TextButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpPage()));
+                            Navigator.pushNamed(
+                              context,
+                              '/sign-up',
+                            ); // Use named route
                           },
-                          child: const Text('Sign Up', style: TextStyle(color: Color(0xFF497D74), fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              color: Color(0xFF497D74),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ],
                     ),

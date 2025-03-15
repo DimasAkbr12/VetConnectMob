@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'detail.dart';
 
 class NewPasswordPage extends StatefulWidget {
   const NewPasswordPage({super.key});
@@ -88,10 +87,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                       const SnackBar(content: Text("Passwords do not match!")),
                     );
                   } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const DetailPage()),
-                    );
+                    Navigator.pushNamed(context, '/sign-in'); // Use named route
                   }
                 },
                 style: ElevatedButton.styleFrom(

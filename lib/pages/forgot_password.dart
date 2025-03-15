@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'create_new_password.dart'; // Pastikan file ini ada
 
 class ForgotPasswordPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -64,10 +63,7 @@ class ForgotPasswordPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   if (_emailController.text.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const NewPasswordPage()),
-                    );
+                    Navigator.pushNamed(context, '/create-new-password'); // Use named route
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Please enter your email!")),

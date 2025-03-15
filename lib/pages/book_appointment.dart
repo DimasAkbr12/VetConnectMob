@@ -27,7 +27,10 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
     {'day': 'Thu', 'date': '24'},
     {'day': 'Fri', 'date': '25'},
     {'day': 'Sat', 'date': '26'},
-    {'day': 'Sun', 'date': '26'}, // Note: In the image, both Sat and Sun show 26
+    {
+      'day': 'Sun',
+      'date': '26',
+    }, // Note: In the image, both Sat and Sun show 26
   ];
 
   final List<String> timeSlots = [
@@ -49,10 +52,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
       appBar: AppBar(
         title: const Text(
           'Doctor Detail',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -82,15 +82,9 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      widget.imageUrl,
+                    child: Image.asset(
+                      'assets/images/image.png', // Using local image
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: Icon(Icons.person, size: 40, color: Colors.grey[700]),
-                        );
-                      },
                     ),
                   ),
                 ),
@@ -109,18 +103,15 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                     const SizedBox(height: 4),
                     Text(
                       widget.specialization,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     ),
                   ],
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 30),
-            
+
             // Date selection
             SizedBox(
               height: 80,
@@ -137,12 +128,19 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                     },
                     child: Container(
                       margin: const EdgeInsets.only(right: 10),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF497D74) : Colors.white,
+                        color:
+                            isSelected ? const Color(0xFF497D74) : Colors.white,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isSelected ? const Color(0xFF497D74) : Colors.grey[300]!,
+                          color:
+                              isSelected
+                                  ? const Color(0xFF497D74)
+                                  : Colors.grey[300]!,
                           width: 1,
                         ),
                       ),
@@ -173,9 +171,9 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                 },
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Time slots grid
             Expanded(
               child: GridView.builder(
@@ -188,25 +186,32 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                 itemCount: timeSlots.length,
                 itemBuilder: (context, index) {
                   bool isSelected = selectedTimeIndex == index;
-                  bool isDisabled = index == 0 || index == 1 || index == 8; // 09:00 AM, 10:00 AM, and 08:00 PM are grayed out in the image
-                  
+                  bool isDisabled =
+                      index == 0 ||
+                      index == 1 ||
+                      index ==
+                          8; // 09:00 AM, 10:00 AM, and 08:00 PM are grayed out in the image
+
                   return GestureDetector(
-                    onTap: isDisabled 
-                        ? null 
-                        : () {
-                            setState(() {
-                              selectedTimeIndex = index;
-                            });
-                          },
+                    onTap:
+                        isDisabled
+                            ? null
+                            : () {
+                              setState(() {
+                                selectedTimeIndex = index;
+                              });
+                            },
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF497D74) : Colors.white,
+                        color:
+                            isSelected ? const Color(0xFF497D74) : Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: isDisabled 
-                              ? Colors.grey[300]! 
-                              : isSelected 
+                          color:
+                              isDisabled
+                                  ? Colors.grey[300]!
+                                  : isSelected
                                   ? const Color(0xFF497D74)
                                   : Colors.grey[300]!,
                           width: 1,
@@ -216,11 +221,13 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                         timeSlots[index],
                         style: TextStyle(
                           fontSize: 14,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isDisabled 
-                              ? Colors.grey[400]
-                              : isSelected 
-                                  ? Colors.white 
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
+                          color:
+                              isDisabled
+                                  ? Colors.grey[400]
+                                  : isSelected
+                                  ? Colors.white
                                   : Colors.black,
                         ),
                       ),
@@ -229,9 +236,9 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                 },
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Book Appointment Button
             SizedBox(
               width: double.infinity,
@@ -294,7 +301,10 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                 // Return to the previous screen after booking
                 Navigator.of(context).pop();
               },
-              child: const Text("Confirm", style: TextStyle(color: Color(0xFF497D74))),
+              child: const Text(
+                "Confirm",
+                style: TextStyle(color: Color(0xFF497D74)),
+              ),
             ),
           ],
         );

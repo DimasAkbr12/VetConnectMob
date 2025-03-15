@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_1/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,9 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
     // Menunggu 2 detik lalu pindah ke HomeScreen
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
+        Navigator.of(context).pushReplacementNamed('/get-started');
       }
     });
   }
@@ -40,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       body: Container(
         width: double.infinity,
-        color: const Color(0xFF497D74), // Ganti warna latar belakang
+        color: const Color(0xFF497D74), 
         child: const Center(
           child: Text(
             'VetConnect',
