@@ -14,8 +14,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
@@ -26,13 +25,19 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  void _Register() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account successfully created!')),
-      );
-    }
+void _register() {
+  if (_formKey.currentState!.validate()) {
+    // Show a SnackBar notification
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Account successfully created!')),
+    );
+
+    // Navigate back to the login page after a short delay
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.pushNamed(context, '/sign-in');
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -48,22 +53,22 @@ class _RegisterPageState extends State<RegisterPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 50),
-                 const Center(
-                      child: Text(
-                        'Create Account',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  const Center(
+                    child: Text(
+                      'Create Account',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
                   const SizedBox(height: 10),
-                    const Center(
-                      child: Text(
-                        'Sign Up to started',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
+                  const Center(
+                    child: Text(
+                      'Sign Up to get started',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
+                  ),
                   const SizedBox(height: 30),
 
                   // Full Name Input
@@ -102,10 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     _confirmPasswordController,
                     _obscureConfirmPassword,
                     () {
-                      setState(
-                        () =>
-                            _obscureConfirmPassword = !_obscureConfirmPassword,
-                      );
+                      setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
                     },
                     confirmPassword: true,
                   ),
@@ -116,7 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: _Register,
+                      onPressed: _register,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF497D74),
                         shape: RoundedRectangleBorder(
@@ -138,10 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       const Text('Already have an account?'),
                       TextButton(
                         onPressed: () {
-                          Navigator.pushReplacementNamed(
-                            context,
-                            '/sign-in',
-                          ); // Use named route
+                          Navigator.pushReplacementNamed(context, '/sign-in');
                         },
                         child: const Text(
                           'Sign In',
@@ -192,8 +191,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) return '$label cannot be empty';
-            if (email &&
-                !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+\$').hasMatch(value)) {
+            if (email && !RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value)) {
               return 'Enter a valid email address';
             }
             return null;

@@ -28,10 +28,10 @@ class GetStartedScreen extends StatelessWidget {
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.only(top: 180), // Sesuaikan posisi
+              padding: const EdgeInsets.only(top: 250), 
               child: Image.asset(
-                "assets/images/dokter.jpg", // Sesuaikan path gambar
-                width: 450, // Ukuran gambar
+                "assets/images/dokter.png", 
+                width: 600, 
               ),
             ),
           ),
@@ -51,7 +51,7 @@ class GetStartedScreen extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'PlusJakartaSans',
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 22,
                     ),
                   ),
