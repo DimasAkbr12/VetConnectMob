@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/create_new_password.dart';
 import 'package:flutter_application_1/pages/detail_dokter.dart';
+import 'package:flutter_application_1/pages/doctor_list_page.dart';
 import 'package:flutter_application_1/pages/forgot_password.dart';
 import 'package:flutter_application_1/pages/get_started_screen.dart';
 import 'package:flutter_application_1/pages/home_page.dart'; 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/create-new-password': (context) => const NewPasswordPage(),
         '/detail': (context) => const DetailPage(),
         '/home': (context) => const HomePage(),
+        '/doctor-list': (context) => DoctorListPage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => const Scaffold(

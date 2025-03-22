@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/article_page.dart';
+import 'package:flutter_application_1/pages/doctor_list_page.dart';
+import 'package:flutter_application_1/pages/report_page.dart';
 import 'package:flutter_application_1/widgets/app_bar.dart';
 import 'package:flutter_application_1/widgets/bottom_nav_bar.dart';
-import 'package:flutter_application_1/pages/detail_dokter.dart'; // Import DetailPage
+import 'package:flutter_application_1/pages/detail_dokter.dart'; 
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,14 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
-  void _onNavItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   // List of doctors
   final List<Map<String, String>> _doctors = [
     {
@@ -38,7 +33,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CustomAppBar(),
-
+      
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -68,9 +63,24 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildServiceIcon(Icons.local_hospital, 'Doctors'),
-                _buildServiceIcon(Icons.article_outlined, 'Article'),
-                _buildServiceIcon(Icons.assignment_outlined, 'Report'),
+                _buildServiceIcon(Icons.local_hospital, 'Doctors', () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DoctorListPage()),
+                  );
+                }),
+                _buildServiceIcon(Icons.article_outlined, 'Article', () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ArticlePage()),
+                  );
+                }),
+                _buildServiceIcon(Icons.assignment_outlined, 'Report', () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ReportsPage()),
+                  );
+                }),
               ],
             ),
 
@@ -84,7 +94,12 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) =>  DoctorListPage()),
+                    );
+                  },
                   child: const Text('See All'),
                 ),
               ],
@@ -108,45 +123,118 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: _onNavItemTapped,
+        currentIndex: 0, // Set the correct tab index
+        context: context,
       ),
     );
   }
 
   // Widget for service icons
-  Widget _buildServiceIcon(IconData icon, String label) {
+  Widget _buildServiceIcon(IconData icon, String label, VoidCallback onTap) {
     return Column(
       children: [
-        CircleAvatar(
-          backgroundColor: const Color(0xFF497D74),
-          radius: 25,
-          child: Icon(icon, color: Colors.white),
+        GestureDetector(
+          onTap: onTap,
+          child: CircleAvatar(
+            backgroundColor: const Color(0xFF497D74),
+            radius: 25,
+            child: Icon(icon, color: Colors.white),
+          ),
         ),
         const SizedBox(height: 8),
-        Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+        ),
       ],
     );
   }
-  Widget _buildDoctorCard(BuildContext context, String name, String specialization, String image) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.asset(image, width: 60, height: 60, fit: BoxFit.cover),
+
+  Widget _buildDoctorCard(
+    BuildContext context,
+    String name,
+    String specialization,
+    String image,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        // Navigate to the detail page when the card is tapped
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const DetailPage()),
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.symmetric(vertical: 12),
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          height: 120, // Fixed height for card
+          child: Row(
+            children: [
+              // Doctor image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(35), // Make it circular
+                child: Image.asset(
+                  image,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(width: 20),
+
+              // Doctor information
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      specialization,
+                      style: const TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
+                    const SizedBox(height: 5),
+                    const Text(
+                      'Lorem ipsum dolor sit amet, consectetur.',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+
+              // Rating and favorite
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.favorite_border, color: Colors.grey),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: Colors.orange, size: 18),
+                      const Text(
+                        '5.0',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(specialization, style: const TextStyle(color: Colors.grey)),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const DetailPage(), 
-            ),
-          );
-        },
       ),
     );
   }
