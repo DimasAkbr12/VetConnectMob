@@ -216,7 +216,6 @@ class _HomePageState extends State<HomePage> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.favorite_border, color: Colors.grey),
                   const SizedBox(height: 8),
                   Row(
                     children: [
