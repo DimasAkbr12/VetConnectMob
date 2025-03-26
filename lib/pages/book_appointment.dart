@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/payment_page.dart';
 
 class BookAppointmentPage extends StatefulWidget {
   final String doctorName;
@@ -6,11 +7,11 @@ class BookAppointmentPage extends StatefulWidget {
   final String imageUrl;
 
   const BookAppointmentPage({
-    Key? key,
+    super.key,
     required this.doctorName,
     required this.specialization,
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   @override
   State<BookAppointmentPage> createState() => _BookAppointmentPageState();
@@ -245,8 +246,12 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  // Handle booking logic
-                  _showBookingConfirmationDialog();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PaymentPage(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF497D74),
@@ -267,48 +272,6 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
           ],
         ),
       ),
-    );
-  }
-
-  void _showBookingConfirmationDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Booking Confirmation"),
-          content: Text(
-            "You have selected an appointment with ${widget.doctorName} on "
-            "${days[selectedDayIndex]['day']}, ${days[selectedDayIndex]['date']} "
-            "at ${timeSlots[selectedTimeIndex]}. Proceed with booking?",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Handle successful booking
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Appointment booked successfully!"),
-                    backgroundColor: Color(0xFF497D74),
-                  ),
-                );
-                // Return to the previous screen after booking
-                Navigator.of(context).pop();
-              },
-              child: const Text(
-                "Confirm",
-                style: TextStyle(color: Color(0xFF497D74)),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

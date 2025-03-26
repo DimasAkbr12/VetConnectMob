@@ -4,6 +4,7 @@ class NewPasswordPage extends StatefulWidget {
   const NewPasswordPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _NewPasswordPageState createState() => _NewPasswordPageState();
 }
 
@@ -96,6 +97,7 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
 
                     // Navigate to the login page after 2 seconds
                     Future.delayed(const Duration(seconds: 2), () {
+                      // ignore: use_build_context_synchronously
                       Navigator.pushNamed(context, '/sign-in');
                     });
                   }

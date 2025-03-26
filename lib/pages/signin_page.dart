@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key}) : super(key: key);
+  const SignInPage({super.key});
 
   @override
   SignInPageState createState() => SignInPageState();
@@ -72,8 +72,9 @@ class SignInPageState extends State<SignInPage> {
                         fillColor: Colors.grey[200],
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Email tidak boleh kosong';
+                        }
                         if (!RegExp(
                           r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
                         ).hasMatch(value)) {
@@ -120,10 +121,12 @@ class SignInPageState extends State<SignInPage> {
                         fillColor: Colors.grey[200],
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Password tidak boleh kosong';
-                        if (value.length < 6)
+                        }
+                        if (value.length < 6) {
                           return 'Password harus minimal 6 karakter';
+                        }
                         return null;
                       },
                     ),

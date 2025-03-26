@@ -8,6 +8,8 @@ class DoctorListPage extends StatelessWidget {
     {'name': 'Dr. Pawan', 'rating': 5.0},
   ];
 
+  DoctorListPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +91,6 @@ class DoctorListPage extends StatelessWidget {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.favorite_border, color: Colors.grey),
                               SizedBox(height: 8),
                               Row(
                                 children: [

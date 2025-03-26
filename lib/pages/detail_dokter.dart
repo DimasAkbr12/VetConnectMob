@@ -54,6 +54,7 @@ class DetailPage extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         decoration: BoxDecoration(
+                          // ignore: deprecated_member_use
                           color: Colors.black.withOpacity(0.6),
                         ),
                         child: const Column(
