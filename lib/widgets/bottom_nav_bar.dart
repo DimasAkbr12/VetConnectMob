@@ -6,15 +6,15 @@ import 'package:flutter_application_1/pages/notification_page.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
-  final BuildContext context; // Required to navigate
+  final Color? backgroundColor;
 
   const CustomBottomNavBar({
     super.key,
     required this.currentIndex,
-    required this.context,
+    this.backgroundColor,
   });
 
-  void _onNavItemTapped(int index) {
+  void _onNavItemTapped(BuildContext context, int index) {
     if (index == currentIndex) return;
 
     Widget page;
@@ -44,8 +44,9 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      backgroundColor: backgroundColor,
       currentIndex: currentIndex,
-      onTap: _onNavItemTapped,
+      onTap: (index) => _onNavItemTapped(context, index),
       selectedItemColor: const Color(0xFF497D74),
       unselectedItemColor: Colors.grey,
       showUnselectedLabels: true,

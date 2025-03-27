@@ -31,8 +31,9 @@ class ArticlePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set background color to white
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Article',
           style: TextStyle(
             color: Colors.black,
@@ -62,9 +63,9 @@ class ArticlePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 0, // Set the correct tab index
-        context: context,
+      bottomNavigationBar: Container(
+        color: const Color.fromARGB(255, 255, 255, 255), // Matches the doctor card
+        child: const CustomBottomNavBar(currentIndex: 0),
       ),
     );
   }
@@ -106,9 +107,17 @@ class ArticlePage extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 12),
         child: Card(
+          color: const Color.fromARGB(
+            255,
+            253,
+            253,
+            253,
+          ), // Slightly gray background
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          elevation: 8, // Increased for thicker shadow
+          shadowColor: Colors.black45, // Darker shadow for visibility
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

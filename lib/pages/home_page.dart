@@ -4,7 +4,8 @@ import 'package:flutter_application_1/pages/doctor_list_page.dart';
 import 'package:flutter_application_1/pages/report_page.dart';
 import 'package:flutter_application_1/widgets/app_bar.dart';
 import 'package:flutter_application_1/widgets/bottom_nav_bar.dart';
-import 'package:flutter_application_1/pages/detail_dokter.dart'; 
+import 'package:flutter_application_1/pages/detail_dokter.dart';
+import 'package:flutter_application_1/pages/notification_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,7 +15,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // List of doctors
   final List<Map<String, String>> _doctors = [
     {
       'name': 'Dr. Nallarasi',
@@ -33,7 +33,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CustomAppBar(),
-      
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -53,13 +52,11 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 20),
-
             const Text(
               'Service',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -83,9 +80,7 @@ class _HomePageState extends State<HomePage> {
                 }),
               ],
             ),
-
             const SizedBox(height: 20),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -97,14 +92,20 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) =>  DoctorListPage()),
+                      MaterialPageRoute(builder: (_) => DoctorListPage()),
                     );
                   },
-                  child: const Text('See All'),
+                  child: const Text(
+                    'See All',
+                    style: TextStyle(
+                      color: Colors.grey, // Changed to gray
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ],
             ),
-
             Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.zero,
@@ -123,13 +124,12 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 0, // Set the correct tab index
-        context: context,
+        currentIndex: 0,
+        backgroundColor: const Color.fromARGB(255, 253, 253, 253),
       ),
     );
   }
 
-  // Widget for service icons
   Widget _buildServiceIcon(IconData icon, String label, VoidCallback onTap) {
     return Column(
       children: [
@@ -158,7 +158,6 @@ class _HomePageState extends State<HomePage> {
   ) {
     return GestureDetector(
       onTap: () {
-        // Navigate to the detail page when the card is tapped
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const DetailPage()),
@@ -167,14 +166,20 @@ class _HomePageState extends State<HomePage> {
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.symmetric(vertical: 12),
+        elevation: 3, // Adds shadow effect
+        color: const Color.fromARGB(
+          255,
+          253,
+          253,
+          253,
+        ), // Updated doctor card color
         child: Container(
           padding: const EdgeInsets.all(16.0),
-          height: 120, // Fixed height for card
+          height: 120,
           child: Row(
             children: [
-              // Doctor image
               ClipRRect(
-                borderRadius: BorderRadius.circular(35), // Make it circular
+                borderRadius: BorderRadius.circular(35),
                 child: Image.asset(
                   image,
                   width: 80,
@@ -183,8 +188,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(width: 20),
-
-              // Doctor information
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,8 +214,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-
-              // Rating and favorite
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
