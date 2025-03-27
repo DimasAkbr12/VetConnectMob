@@ -45,10 +45,16 @@ class NotificationPage extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
       ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 2,
-        context: context,
+      bottomNavigationBar: Container(
+        color: const Color.fromARGB(
+          255,
+          253,
+          253,
+          253,
+        ), // Matches the doctor card
+        child: const CustomBottomNavBar(currentIndex: 2),
       ),
+
       body:
           notifications.isEmpty
               ? _buildEmptyNotification()

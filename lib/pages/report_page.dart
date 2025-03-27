@@ -26,10 +26,16 @@ class ReportsPage extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
       ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 1,
-        context: context,
+      bottomNavigationBar: Container(
+        color: const Color.fromARGB(
+          255,
+          253,
+          253,
+          253,
+        ), // Matches the doctor card
+        child: const CustomBottomNavBar(currentIndex: 1),
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

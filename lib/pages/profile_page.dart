@@ -28,10 +28,16 @@ class ProfilePage extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
       ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 3,
-        context: context,
+      bottomNavigationBar: Container(
+        color: const Color.fromARGB(
+          255,
+          253,
+          253,
+          253,
+        ), // Matches the doctor card
+        child: const CustomBottomNavBar(currentIndex: 3),
       ),
+
       body: Column(
         children: [
           const SizedBox(height: 20),
@@ -47,13 +53,16 @@ class ProfilePage extends StatelessWidget {
               );
             },
           ),
-          _buildMenuItem(icon: Icons.payment, title: 'Payment', 
-          onTap: () {
+          _buildMenuItem(
+            icon: Icons.payment,
+            title: 'Payment',
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => PaymentPage()),
               );
-            },),
+            },
+          ),
           _buildMenuItem(
             icon: Icons.person_outline,
             title: 'Edit Profile',
