@@ -4,8 +4,10 @@ import 'package:flutter_application_1/pages/my_order_page.dart';
 import 'package:flutter_application_1/pages/payment_page.dart';
 import 'package:flutter_application_1/widgets/bottom_nav_bar.dart';
 
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class ProfilePage extends StatelessWidget {
         ), // Matches the doctor card
         child: const CustomBottomNavBar(currentIndex: 3),
       ),
+
 
       body: Column(
         children: [
@@ -76,13 +79,14 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+
   Widget _buildProfileHeader() {
     return Column(
       children: [
         const CircleAvatar(
           radius: 40,
           backgroundImage: AssetImage(
-            'assets/profile.jpg',
+            'assets/images/dokter_detail.png',
           ), // Replace with actual image
         ),
         const SizedBox(height: 10),
@@ -102,6 +106,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+
   Widget _buildMenuItem({
     required IconData icon,
     required String title,
@@ -114,6 +119,7 @@ class ProfilePage extends StatelessWidget {
       onTap: onTap,
     );
   }
+
 
   Widget _buildLogoutButton() {
     return TextButton(
@@ -129,3 +135,5 @@ class ProfilePage extends StatelessWidget {
     );
   }
 }
+
+

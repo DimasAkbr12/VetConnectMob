@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/home_page.dart';
 import 'package:flutter_application_1/widgets/bottom_nav_bar.dart';
 
+
 class ReportsPage extends StatelessWidget {
   const ReportsPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,7 @@ class ReportsPage extends StatelessWidget {
         child: const CustomBottomNavBar(currentIndex: 1),
       ),
 
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -48,6 +51,7 @@ class ReportsPage extends StatelessWidget {
               statusColor: Colors.green,
               iconColor: Colors.green,
               onDownload: () => _downloadReport(context),
+              imagePath: 'assets/images/image.png',
             ),
             const SizedBox(height: 16),
             _buildConsultationCard(
@@ -58,6 +62,7 @@ class ReportsPage extends StatelessWidget {
               statusColor: Colors.orange,
               iconColor: Colors.orange,
               onDownload: () => _showPaymentPrompt(context),
+              imagePath: 'assets/images/image.png',
             ),
             const SizedBox(height: 16),
             _buildConsultationCard(
@@ -68,12 +73,14 @@ class ReportsPage extends StatelessWidget {
               statusColor: Colors.red,
               iconColor: Colors.red,
               onDownload: () => _showCancelledMessage(context),
+              imagePath: 'assets/images/image.png',
             ),
           ],
         ),
       ),
     );
   }
+
 
   void _downloadReport(BuildContext context) {
     // Simulate download
@@ -84,6 +91,7 @@ class ReportsPage extends StatelessWidget {
       ),
     );
   }
+
 
   void _showPaymentPrompt(BuildContext context) {
     showDialog(
@@ -104,6 +112,7 @@ class ReportsPage extends StatelessWidget {
     );
   }
 
+
   void _showCancelledMessage(BuildContext context) {
     showDialog(
       context: context,
@@ -123,6 +132,7 @@ class ReportsPage extends StatelessWidget {
     );
   }
 
+
   Widget _buildConsultationCard({
     required String date,
     required String doctorName,
@@ -131,6 +141,7 @@ class ReportsPage extends StatelessWidget {
     required Color statusColor,
     required Color iconColor,
     required VoidCallback onDownload,
+    String? imagePath,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,6 +155,7 @@ class ReportsPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
+       
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -161,15 +173,24 @@ class ReportsPage extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey[200],
-                ),
-                child: const Icon(Icons.pets, color: Colors.grey),
-              ),
+Container(
+  width: 48,
+  height: 48,
+  decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    color: Colors.grey[200],
+  ),
+  child: ClipOval(
+    child: Image.asset(
+      imagePath ?? 'assets/images/default_avatar.png', // Jika `imagePath` kosong, gunakan gambar default
+      width: 48,
+      height: 48,
+      fit: BoxFit.cover, // Agar gambar pas di dalam lingkaran
+    ),
+  ),
+),
+
+
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -195,35 +216,34 @@ class ReportsPage extends StatelessWidget {
                   ],
                 ),
               ),
-              Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      // ignore: deprecated_member_use
-                      color: statusColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      statusText,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: statusColor,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  IconButton(
-                    onPressed: onDownload,
-                    icon: Icon(Icons.file_download_outlined, color: iconColor),
-                    splashRadius: 24,
-                  ),
-                ],
-              ),
+Row(
+  mainAxisAlignment: MainAxisAlignment.end, // Biar semua elemen sejajar ke kanan
+  children: [
+    Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: statusColor.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        statusText,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: statusColor,
+        ),
+      ),
+    ),
+    const SizedBox(width: 8), // Tambahkan jarak antara status dan ikon download
+    Icon(
+      Icons.file_download_outlined,
+      color: iconColor,
+      size: 20, // Kecilkan ikon agar lebih proporsional
+    ),
+  ],
+),
+
+
             ],
           ),
         ),
@@ -231,3 +251,5 @@ class ReportsPage extends StatelessWidget {
     );
   }
 }
+
+

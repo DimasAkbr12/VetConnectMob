@@ -5,7 +5,6 @@ import 'package:flutter_application_1/pages/report_page.dart';
 import 'package:flutter_application_1/widgets/app_bar.dart';
 import 'package:flutter_application_1/widgets/bottom_nav_bar.dart';
 import 'package:flutter_application_1/pages/detail_dokter.dart';
-import 'package:flutter_application_1/pages/notification_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

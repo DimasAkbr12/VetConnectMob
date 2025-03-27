@@ -62,7 +62,7 @@ class MyOrderPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     color: Colors.grey[200],
                     image: const DecorationImage(
-                      image: AssetImage('assets/vet_clinic.jpg'),
+                      image: AssetImage('assets/images/dokter_detail.png'),
                       fit: BoxFit.cover,
                     ),
                   ),

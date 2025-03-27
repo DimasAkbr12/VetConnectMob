@@ -2,27 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/home_page.dart';
 import 'package:flutter_application_1/widgets/bottom_nav_bar.dart';
 
+
 class NotificationPage extends StatelessWidget {
   final List<NotificationItem> notifications = [
     NotificationItem(
-      image: 'assets/doctor1.jpg',
+      image: 'assets/images/kucingbahagia2.png',
       title: 'Need the Best Care for Your Pet?',
       time: '2 hours ago',
     ),
     NotificationItem(
-      image: 'assets/doctor2.jpg',
+      image: 'assets/images/gambardiskon.png',
       title:
-          '20% discount if you stay on Saturday 27 November 2024 at Cerulean Hotel',
+          'Good News! Get a 20% discount on pet healthcare services until 03/10/2029. Dont miss this opportunity!',
       time: '2 hours ago',
     ),
     NotificationItem(
-      image: 'assets/booking_success.png',
+      image: 'assets/images/gambarklinik.png',
       title: 'You have successfully booked a doctor.',
       time: '2 hours ago',
     ),
   ];
 
+
   NotificationPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +58,14 @@ class NotificationPage extends StatelessWidget {
         child: const CustomBottomNavBar(currentIndex: 2),
       ),
 
+
       body:
           notifications.isEmpty
               ? _buildEmptyNotification()
               : _buildNotificationList(),
     );
   }
+
 
   Widget _buildEmptyNotification() {
     return Center(
@@ -87,6 +92,7 @@ class NotificationPage extends StatelessWidget {
     );
   }
 
+
   Widget _buildNotificationList() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -112,6 +118,7 @@ class NotificationPage extends StatelessWidget {
     );
   }
 
+
   Widget _buildNotificationItem(NotificationItem item) {
     return ListTile(
       leading: CircleAvatar(
@@ -127,10 +134,12 @@ class NotificationPage extends StatelessWidget {
   }
 }
 
+
 class NotificationItem {
   final String image;
   final String title;
   final String time;
+
 
   NotificationItem({
     required this.image,
@@ -138,3 +147,5 @@ class NotificationItem {
     required this.time,
   });
 }
+
+
