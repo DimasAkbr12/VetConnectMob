@@ -5,8 +5,12 @@ import 'package:flutter_application_1/pages/payment_page.dart';
 import 'package:flutter_application_1/widgets/bottom_nav_bar.dart';
 
 
+
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+
 
 
   @override
@@ -41,6 +45,8 @@ class ProfilePage extends StatelessWidget {
       ),
 
 
+
+
       body: Column(
         children: [
           const SizedBox(height: 20),
@@ -66,11 +72,13 @@ class ProfilePage extends StatelessWidget {
               );
             },
           ),
-          _buildMenuItem(
-            icon: Icons.person_outline,
-            title: 'Edit Profile',
-            onTap: () {},
-          ),
+_buildMenuItem(
+  icon: Icons.person_outline,
+  title: 'Edit Profile',
+  onTap: () {
+    Navigator.pushNamed(context, '/edit-profile');
+  },
+),
           const Spacer(),
           _buildLogoutButton(),
           const SizedBox(height: 30),
@@ -78,6 +86,8 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
+
+
 
 
   Widget _buildProfileHeader() {
@@ -107,6 +117,8 @@ class ProfilePage extends StatelessWidget {
   }
 
 
+
+
   Widget _buildMenuItem({
     required IconData icon,
     required String title,
@@ -119,6 +131,8 @@ class ProfilePage extends StatelessWidget {
       onTap: onTap,
     );
   }
+
+
 
 
   Widget _buildLogoutButton() {
@@ -135,5 +149,3 @@ class ProfilePage extends StatelessWidget {
     );
   }
 }
-
-
