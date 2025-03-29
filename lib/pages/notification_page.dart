@@ -30,11 +30,13 @@ class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
           'Notification',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -48,15 +50,11 @@ class NotificationPage extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
       ),
-      bottomNavigationBar: Container(
-        color: const Color.fromARGB(
-          255,
-          253,
-          253,
-          253,
-        ), // Matches the doctor card
-        child: const CustomBottomNavBar(currentIndex: 2),
-      ),
+bottomNavigationBar: CustomBottomNavBar(
+  currentIndex: 2,
+  backgroundColor: const Color.fromARGB(255, 253, 253, 253),
+),
+
 
 
       body:
