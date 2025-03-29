@@ -15,6 +15,7 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
           'Payment',
@@ -142,7 +143,9 @@ class _PaymentPageState extends State<PaymentPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => PaymentSuccessPage()),
+                    MaterialPageRoute(
+                      builder: (context) => PaymentSuccessPage(),
+                    ),
                   );
                 },
                 child: const Text(

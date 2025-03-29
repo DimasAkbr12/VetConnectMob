@@ -10,11 +10,13 @@ class ReportsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
           'History',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -28,14 +30,9 @@ class ReportsPage extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
       ),
-      bottomNavigationBar: Container(
-        color: const Color.fromARGB(
-          255,
-          253,
-          253,
-          253,
-        ), // Matches the doctor card
-        child: const CustomBottomNavBar(currentIndex: 1),
+bottomNavigationBar: CustomBottomNavBar(
+  currentIndex: 1,
+  backgroundColor: const Color.fromARGB(255, 253, 253, 253),
       ),
 
 
