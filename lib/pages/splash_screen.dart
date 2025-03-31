@@ -8,16 +8,15 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
 
-    // Mengatur fullscreen immersive mode
+    // Set full-screen immersive mode
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-    // Menunggu 2 detik lalu pindah ke HomeScreen
+    // Navigate to the Get Started screen after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/get-started');
@@ -27,8 +26,11 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
+    // Restore the system UI when leaving the screen
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
     super.dispose();
   }
 
@@ -37,15 +39,11 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       body: Container(
         width: double.infinity,
-        color: const Color(0xFF497D74), 
-        child: const Center(
-          child: Text(
-            'VetConnect',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 28, // Ukuran lebih sesuai dengan gambar
-            ),
+        color: const Color(0xFF497D74), // Background color
+        child: Center(
+          child: Image.asset(
+            "assets/images/vetconnect-logo-white.png",
+            width: 300, // Adjust width as needed
           ),
         ),
       ),
