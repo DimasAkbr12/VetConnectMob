@@ -8,76 +8,97 @@ class GetStartedScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Gradient (Abu-Abu dengan Sedikit Hijau)
+          // Background Gradient
           Container(
             width: double.infinity,
             height: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromARGB(255, 10, 89, 59), // Abu-abu dengan sedikit hijau
-                  Color.fromARGB(71, 2, 50, 21), // Hijau gelap di bawah
+                  Color(0x000A593B), 
+                  Color(0xFF0A593B),  // Dark green (top)
                 ],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
+                stops: [0.3, 0.7],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
 
-          // Gambar Dokter Hewan
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 250), 
-              child: Image.asset(
-                "assets/images/dokter.png", 
-                width: 600, 
+          // Doctor Image - Positioned at bottom
+          Positioned(
+            bottom: 0,  // Anchors to bottom
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              "assets/images/dokter.png",
+              width: MediaQuery.of(context).size.width * 1.2,  // Wider than screen
+              fit: BoxFit.contain,
+              alignment: Alignment.bottomCenter,
+            ),
+          ),
+
+          // Dark overlay for text area
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.center,
+                colors: [
+                  Colors.black.withOpacity(0.4),
+                  Colors.transparent,
+                ],
               ),
             ),
           ),
 
-          // Teks dan Tombol
+          // Text and Button Content
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 60),
+              padding: const EdgeInsets.only(bottom: 120),  // Adjusted for image
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Teks Judul
                   const Text(
                     'Pelayanan Dokter Hewan\nEksklusif, Kapan Saja, di\nMana Saja',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'PlusJakartaSans',
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 22,
+                      color: Colors.white,
+                      fontSize: 30,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black54,
+                          offset: Offset(2, 2),
+                          blurRadius: 4,
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 30),
-
-                  // Tombol "Get Started"
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/sign-in');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF497D74), // Warna hijau sesuai gambar
-                        foregroundColor: const Color.fromARGB(255, 255, 255, 255),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pushNamed(context, '/sign-in'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF497D74),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 3,
                         ),
-                        elevation: 3,
-                      ),
-                      child: const Text(
-                        'Get Started',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                        child: const Text(
+                          'Get Started',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),

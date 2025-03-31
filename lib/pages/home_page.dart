@@ -25,6 +25,26 @@ class _HomePageState extends State<HomePage> {
       'specialization': 'Veterinarian',
       'image': 'assets/images/image.png',
     },
+    {
+      'name': 'Dr. Nallarasi',
+      'specialization': 'Veterinarian',
+      'image': 'assets/images/dokter_detail.png',
+    },
+    {
+      'name': 'Drh. Joko Susanto',
+      'specialization': 'Veterinarian',
+      'image': 'assets/images/image.png',
+    },
+    {
+      'name': 'Dr. Nallarasi',
+      'specialization': 'Veterinarian',
+      'image': 'assets/images/dokter_detail.png',
+    },
+    {
+      'name': 'Drh. Joko Susanto',
+      'specialization': 'Veterinarian',
+      'image': 'assets/images/image.png',
+    },
   ];
 
   @override

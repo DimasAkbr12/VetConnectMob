@@ -6,6 +6,10 @@ class DoctorListPage extends StatelessWidget {
     {'name': 'Dr. Wanitha', 'rating': 5.0, 'image': 'assets/images/dokter2.png'},
     {'name': 'Dr. Udara', 'rating': 5.0, 'image': 'assets/images/dokter3.jpg'},
     {'name': 'Dr. Surya', 'rating': 5.0, 'image': 'assets/images/dokter4.jpg'},
+    {'name': 'Dr. Pawan', 'rating': 5.0, 'image': 'assets/images/dokter6.jpg'},
+    {'name': 'Dr. Wanitha', 'rating': 5.0, 'image': 'assets/images/dokter2.png'},
+    {'name': 'Dr. Udara', 'rating': 5.0, 'image': 'assets/images/dokter3.jpg'},
+    {'name': 'Dr. Surya', 'rating': 5.0, 'image': 'assets/images/dokter4.jpg'},
   ];
 
   DoctorListPage({super.key});
