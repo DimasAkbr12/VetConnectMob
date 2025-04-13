@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -12,6 +14,117 @@ class SignInPageState extends State<SignInPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  // Firebase Auth instance
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  // Method untuk sign in dengan email dan password
+  Future<void> _signInWithEmailAndPassword() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Mencoba login dengan Firebase Auth
+      await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      // Jika berhasil, navigasi ke halaman home
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } on FirebaseAuthException catch (e) {
+      // Tangani error dari Firebase Auth
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = 'Email tidak terdaftar. Silakan daftar terlebih dahulu.';
+          break;
+        case 'wrong-password':
+          message = 'Password salah. Silakan coba lagi.';
+          break;
+        case 'invalid-credential':
+          message = 'Kredensial tidak valid. Periksa email dan password Anda.';
+          break;
+        case 'user-disabled':
+          message = 'Akun ini telah dinonaktifkan.';
+          break;
+        case 'too-many-requests':
+          message = 'Terlalu banyak percobaan. Silakan coba lagi nanti.';
+          break;
+        default:
+          message = 'Terjadi kesalahan: ${e.message}';
+      }
+
+      setState(() {
+        _errorMessage = message;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  // Method untuk sign in dengan Google
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Memulai proses sign in dengan Google
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      
+      if (googleUser == null) {
+        // User membatalkan proses sign in
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Mendapatkan auth details dari request
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // Membuat credential untuk Firebase
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in dengan credential
+      await _auth.signInWithCredential(credential);
+
+      // Navigasi ke home jika berhasil
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Gagal masuk dengan Google. Silakan coba lagi.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +244,16 @@ class SignInPageState extends State<SignInPage> {
                       },
                     ),
 
+                    // Error Message (jika ada)
+                    if (_errorMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          _errorMessage!,
+                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+
                     // Forgot Password
                     Align(
                       alignment: Alignment.centerRight,
@@ -139,7 +262,7 @@ class SignInPageState extends State<SignInPage> {
                           Navigator.pushNamed(
                             context,
                             '/forgot-password',
-                          ); // Use named route
+                          );
                         },
                         child: const Text(
                           'Forgot Password?',
@@ -155,25 +278,33 @@ class SignInPageState extends State<SignInPage> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            // Navigate to Home Page
-                            Navigator.pushReplacementNamed(
-                              context,
-                              '/home',
-                            ); // Replace current route
-                          }
-                        },
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  _signInWithEmailAndPassword();
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF497D74),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
+                          disabledBackgroundColor: const Color(0xFF497D74).withOpacity(0.6),
                         ),
-                        child: const Text(
-                          'Sign In',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'Sign In',
+                                style: TextStyle(fontSize: 16, color: Colors.white),
+                              ),
                       ),
                     ),
 
@@ -201,14 +332,21 @@ class SignInPageState extends State<SignInPage> {
                       width: double.infinity,
                       height: 50,
                       child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Implementasi Google Sign In
-                        },
-                        icon: Image.asset(
-                          'assets/images/google.png',
-                          height: 24,
-                          width: 24,
-                        ),
+                        onPressed: _isLoading ? null : _signInWithGoogle,
+                        icon: _isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            : Image.asset(
+                                'assets/images/google.png',
+                                height: 24,
+                                width: 24,
+                              ),
                         label: const Text(
                           'Sign in with Google',
                           style: TextStyle(color: Colors.black87),
@@ -234,7 +372,7 @@ class SignInPageState extends State<SignInPage> {
                             Navigator.pushNamed(
                               context,
                               '/sign-up',
-                            ); // Use named route
+                            );
                           },
                           child: const Text(
                             'Sign Up',

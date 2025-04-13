@@ -4,14 +4,8 @@ import 'package:flutter_application_1/pages/my_order_page.dart';
 import 'package:flutter_application_1/pages/payment_page.dart';
 import 'package:flutter_application_1/widgets/bottom_nav_bar.dart';
 
-
-
-
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +22,7 @@ class ProfilePage extends StatelessWidget {
           onPressed: () {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => const HomePage()),
               (route) => false,
             );
           },
@@ -36,14 +30,10 @@ class ProfilePage extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
       ),
-bottomNavigationBar: CustomBottomNavBar(
-  currentIndex: 3,
-  backgroundColor: const Color.fromARGB(255, 253, 253, 253),
+      bottomNavigationBar: const CustomBottomNavBar(
+        currentIndex: 3,
+        backgroundColor: Color.fromARGB(255, 253, 253, 253),
       ),
-
-
-
-
       body: Column(
         children: [
           const SizedBox(height: 20),
@@ -55,7 +45,7 @@ bottomNavigationBar: CustomBottomNavBar(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyOrderPage()),
+                MaterialPageRoute(builder: (context) => const MyOrderPage()),
               );
             },
           ),
@@ -65,56 +55,50 @@ bottomNavigationBar: CustomBottomNavBar(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PaymentPage()),
+                MaterialPageRoute(builder: (context) => const PaymentPage()),
               );
             },
           ),
-_buildMenuItem(
-  icon: Icons.person_outline,
-  title: 'Edit Profile',
-  onTap: () {
-    Navigator.pushNamed(context, '/edit-profile');
-  },
-),
+          _buildMenuItem(
+            icon: Icons.person_outline,
+            title: 'Edit Profile',
+            onTap: () {
+              Navigator.pushNamed(context, '/edit-profile');
+            },
+          ),
           const Spacer(),
-          _buildLogoutButton(),
+          _buildLogoutButton(context),
           const SizedBox(height: 30),
         ],
       ),
     );
   }
 
-
-
-
   Widget _buildProfileHeader() {
     return Column(
-      children: [
-        const CircleAvatar(
+      children: const [
+        CircleAvatar(
           radius: 40,
           backgroundImage: AssetImage(
             'assets/images/dokter_detail.png',
-          ), // Replace with actual image
+          ),
         ),
-        const SizedBox(height: 10),
-        const Text(
+        SizedBox(height: 10),
+        Text(
           'Pedri Gonzalez',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        const Text(
+        Text(
           'PedriGo@gmail.com',
           style: TextStyle(fontSize: 14, color: Colors.grey),
         ),
-        const Text(
+        Text(
           '+63 187231111',
           style: TextStyle(fontSize: 14, color: Colors.grey),
         ),
       ],
     );
   }
-
-
-
 
   Widget _buildMenuItem({
     required IconData icon,
@@ -129,14 +113,13 @@ _buildMenuItem(
     );
   }
 
-
-
-
-  Widget _buildLogoutButton() {
+  Widget _buildLogoutButton(BuildContext context) {
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.of(context).pushNamedAndRemoveUntil('/sign-in', (route) => false);
+      },
       child: const Text(
-        'LogOut',
+        'Log Out',
         style: TextStyle(
           color: Colors.red,
           fontSize: 16,
