@@ -178,7 +178,7 @@ class MyOrderPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
+                color: Colors.grey,
                 spreadRadius: 2,
                 blurRadius: 10,
                 offset: const Offset(0, 3),
@@ -191,6 +191,7 @@ class MyOrderPage extends StatelessWidget {
                 data: "VETAPP-123456",
                 version: QrVersions.auto,
                 size: 180,
+                // ignore: deprecated_member_use
                 foregroundColor: const Color(0xFF497D74),
               ),
               const SizedBox(height: 12),

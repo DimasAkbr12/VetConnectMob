@@ -10,17 +10,11 @@ import 'package:flutter_application_1/pages/register_page.dart';
 import 'package:flutter_application_1/pages/signin_page.dart';
 import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/pages/edit_profile_page.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -34,16 +28,16 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreen(),
         '/get-started': (context) => const GetStartedScreen(),
-        '/sign-in': (context) => const SignInPage(),
-        '/sign-up': (context) => const RegisterPage(),
-        '/forgot-password': (context) =>  ForgotPasswordPage(),
+        '/sign-in': (context) => SignInPage(), // Hapus const
+        '/sign-up': (context) => RegisterPage(), // Hapus const
+        '/forgot-password': (context) => ForgotPasswordPage(), // Hapus const
         '/create-new-password': (context) => const NewPasswordPage(),
         '/detail': (context) => const DetailPage(),
         '/home': (context) => const HomePage(),
         '/doctor-list': (context) => DoctorListPage(),
-        'payment-success': (context) => PaymentSuccessPage(),
+        '/payment-success': (context) => PaymentSuccessPage(),
         '/edit-profile': (context) => const EditProfilePage(),
-        '/Log Out': (context) => const SignInPage(),
+        '/log-out': (context) => SignInPage(), // Hapus const
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => const Scaffold(
