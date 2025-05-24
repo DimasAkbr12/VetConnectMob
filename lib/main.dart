@@ -28,16 +28,16 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreen(),
         '/get-started': (context) => const GetStartedScreen(),
-        '/sign-in': (context) => SignInPage(), // Hapus const
-        '/sign-up': (context) => RegisterPage(), // Hapus const
-        '/forgot-password': (context) => ForgotPasswordPage(), // Hapus const
+        '/sign-in': (context) => SignInPage(), 
+        '/sign-up': (context) => RegisterPage(), 
+        '/forgot-password': (context) => ForgotPasswordPage(), 
         '/create-new-password': (context) => const NewPasswordPage(),
         '/detail': (context) => const DetailPage(),
         '/home': (context) => const HomePage(),
         '/doctor-list': (context) => DoctorListPage(),
         '/payment-success': (context) => PaymentSuccessPage(),
         '/edit-profile': (context) => EditProfilePage(),
-        '/log-out': (context) => SignInPage(), // Hapus const
+        '/log-out': (context) => SignInPage(), 
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => const Scaffold(

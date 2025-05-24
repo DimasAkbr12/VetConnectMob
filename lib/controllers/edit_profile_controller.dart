@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import '../services/edit_profile_api_service.dart';
 
 class EditProfileController extends GetxController {
@@ -10,83 +14,47 @@ class EditProfileController extends GetxController {
   final ageController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  
-  final isLoading = false.obs;
-  final isFormValid = false.obs;
+
+  var isLoading = false.obs;
+  String token = '';
 
   @override
   void onInit() {
     super.onInit();
-    // Add listeners to validate form
-    nameController.addListener(_validateForm);
-    emailController.addListener(_validateForm);
-    phoneController.addListener(_validateForm);
-    ageController.addListener(_validateForm);
-    passwordController.addListener(_validateForm);
-    confirmPasswordController.addListener(_validateForm);
+    loadToken();
   }
 
-  void _validateForm() {
-    isFormValid.value = nameController.text.isNotEmpty &&
-        emailController.text.isNotEmpty &&
-        phoneController.text.isNotEmpty &&
-        ageController.text.isNotEmpty &&
-        passwordController.text.isNotEmpty &&
-        confirmPasswordController.text.isNotEmpty;
+  Future<void> loadToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token') ?? '';
   }
 
-  void updateProfile(BuildContext context) async {
-    final name = nameController.text.trim();
-    final email = emailController.text.trim();
-    final phone = phoneController.text.trim();
-    final ageText = ageController.text.trim();
-    final password = passwordController.text.trim();
-    final confirmPassword = confirmPasswordController.text.trim();
-
-    // Validation
-    if (name.isEmpty || email.isEmpty || phone.isEmpty || ageText.isEmpty || 
-        password.isEmpty || confirmPassword.isEmpty) {
-      Get.snackbar('Error', 'Semua field wajib diisi');
-      return;
-    }
-
-    if (password != confirmPassword) {
-      Get.snackbar('Error', 'Password dan konfirmasi password tidak sama');
-      return;
-    }
-
-    int? age = int.tryParse(ageText);
-    if (age == null || age <= 0) {
-      Get.snackbar('Error', 'Umur harus berupa angka yang valid');
-      return;
-    }
-
+  Future<void> updateProfile(BuildContext context) async {
     isLoading.value = true;
-
     try {
       final response = await EditProfileService.updateProfile(
-        name: name,
-        email: email,
-        noTelp: phone,
-        umur: age,
-        password: password,
-        passwordConfirmation: confirmPassword,
+        token: token,
+        name: nameController.text,
+        email: emailController.text,
+        noTelp: phoneController.text,
+        umur: int.tryParse(ageController.text),
+        password: passwordController.text.isNotEmpty ? passwordController.text : null,
+        passwordConfirmation: confirmPasswordController.text.isNotEmpty
+            ? confirmPasswordController.text
+            : null,
       );
 
-      final data = jsonDecode(response.body);
+      final result = await http.Response.fromStream(response);
+      final data = jsonDecode(result.body);
 
-      if (response.statusCode == 200) {
-        print('Update profile sukses');
-        Get.snackbar('Sukses', 'Profile berhasil diupdate');
-        Navigator.pushReplacementNamed(context, '/home');
+      if (result.statusCode == 200 && data['success'] == true) {
+        Get.snackbar("Sukses", "Profil berhasil diperbarui");
+        Navigator.pop(context);
       } else {
-        final message = data['message'] ?? 'Update profile gagal';
-        print('Gagal update profile: $message');
-        Get.snackbar('Update Gagal', message);
+        Get.snackbar("Gagal", data['message'] ?? 'Gagal memperbarui profil');
       }
     } catch (e) {
-      print('Exception saat update profile: $e');
-      Get.snackbar('Error', 'Terjadi kesalahan: $e');
+      Get.snackbar("Error", "Terjadi kesalahan: $e");
     } finally {
       isLoading.value = false;
     }

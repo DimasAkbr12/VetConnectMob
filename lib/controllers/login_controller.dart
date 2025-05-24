@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';  // <- import ini
 import '../services/login_api_service.dart';
 
 class LoginController extends GetxController {
@@ -10,7 +11,7 @@ class LoginController extends GetxController {
   final isPasswordHidden = true.obs;
   final isLoading = false.obs;
 
-  void login(BuildContext context) async {
+  Future<void> login(BuildContext context) async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
@@ -23,13 +24,16 @@ class LoginController extends GetxController {
 
     try {
       final response = await LoginService.login(email, password);
-
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 && data['token'] != null) {
-
         final token = data['token'];
         print('Login sukses, token: $token');
+
+        // Simpan token ke shared_preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+
         Get.snackbar('Sukses', 'Berhasil login');
         Navigator.pushReplacementNamed(context, '/home');
       } else {
