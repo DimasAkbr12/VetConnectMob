@@ -1,34 +1,29 @@
-import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class EditProfileService {
   static const String baseUrl = 'https://vetconnectmob-production.up.railway.app/api';
 
-  static Future<http.Response> updateProfile({
+  static Future<http.StreamedResponse> updateProfile({
+    required String token,
     required String name,
     required String email,
-    required String noTelp,
-    required int umur,
-    required String password,
-    required String passwordConfirmation,
+    String? noTelp,
+    int? umur,
+    String? password,
+    String? passwordConfirmation,
   }) async {
-    try {
-      final response = await http.put(
-        Uri.parse("$baseUrl/profile"), // Sesuaikan endpoint jika berbeda
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'name': name,
-          'email': email,
-          'no_telp': noTelp,
-          'umur': umur,
-          'password': password,
-          'password_confirmation': passwordConfirmation,
-        }),
-      ).timeout(const Duration(seconds: 10));
+    var uri = Uri.parse('$baseUrl/user/profile');
+    var request = http.MultipartRequest('PUT', uri);
 
-      return response;
-    } catch (e) {
-      throw Exception('Update profile error: $e');
-    }
+    request.headers['Authorization'] = 'Bearer $token';
+    request.fields['name'] = name;
+    request.fields['email'] = email;
+    if (noTelp != null) request.fields['no_telp'] = noTelp;
+    if (umur != null) request.fields['umur'] = umur.toString();
+    if (password != null) request.fields['password'] = password;
+    if (passwordConfirmation != null) request.fields['password_confirmation'] = passwordConfirmation;
+
+    return request.send();
   }
 }
