@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/doctor-list': (context) => DoctorListPage(),
         '/payment-success': (context) => PaymentSuccessPage(),
-        '/edit-profile': (context) => const EditProfilePage(),
+        '/edit-profile': (context) => EditProfilePage(),
         '/log-out': (context) => SignInPage(), // Hapus const
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
