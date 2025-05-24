@@ -1,37 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/detail_article.dart';
-import 'package:flutter_application_1/widgets/bottom_nav_bar.dart';
+import 'package:get/get.dart';
+import '../controllers/article_controller.dart';
+import '../pages/detail_article.dart';
+import '../widgets/bottom_nav_bar.dart';
+
 
 class ArticlePage extends StatelessWidget {
-  final List<Map<String, String>> articles = [
-    {'image': 'assets/images/burung.jpg', 'title': 'Waspada Flu Burung!'},
-    {
-      'image': 'assets/images/kucing.jpg',
-      'title': 'Cara Mudah Membuat Si Meong Sehat dan...',
-    },
-    {'image': 'assets/images/burung.jpg', 'title': 'Waspada Flu Burung!'},
-    {
-      'image': 'assets/images/kucing.jpg',
-      'title': 'Cara Mudah Membuat Si Meong Sehat dan...',
-    },
-    {'image': 'assets/images/burung.jpg', 'title': 'Waspada Flu Burung!'},
-    {
-      'image': 'assets/images/kucing.jpg',
-      'title': 'Cara Mudah Membuat Si Meong Sehat dan...',
-    },
-    {'image': 'assets/images/burung.jpg', 'title': 'Waspada Flu Burung!'},
-    {
-      'image': 'assets/images/kucing.jpg',
-      'title': 'Cara Mudah Membuat Si Meong Sehat dan...',
-    },
-  ];
+  final ArticleController controller = Get.put(ArticleController());
+
 
   ArticlePage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set background color to white
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
           'Article',
@@ -53,24 +37,43 @@ class ArticlePage extends StatelessWidget {
           children: [
             _buildSearchBar(),
             Expanded(
-              child: ListView.builder(
-                itemCount: articles.length,
-                itemBuilder:
-                    (context, index) =>
-                        _buildArticleCard(context, articles[index]),
-              ),
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+
+                if (controller.articles.isEmpty) {
+                  return const Center(child: Text('Tidak ada artikel.'));
+                }
+
+
+                return ListView.builder(
+                  itemCount: controller.articles.length,
+                  itemBuilder: (context, index) {
+                    final article = controller.articles[index];
+                    return _buildArticleCard(
+                      context,
+                      imageUrl: article.gambar.isNotEmpty
+                          ? article.gambar.first
+                          : '', // fallback jika kosong
+                      title: article.judul,
+                    );
+                  },
+                );
+              }),
             ),
           ],
         ),
       ),
       bottomNavigationBar: Container(
-        color: const Color.fromARGB(255, 255, 255, 255), // Matches the doctor card
+        color: Colors.white,
         child: const CustomBottomNavBar(currentIndex: 0),
       ),
     );
   }
 
-  /// **Search Bar Widget**
+
   Widget _buildSearchBar() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -89,35 +92,33 @@ class ArticlePage extends StatelessWidget {
     );
   }
 
-  /// **Article Card Widget**
-  Widget _buildArticleCard(BuildContext context, Map<String, String> article) {
+
+  Widget _buildArticleCard(
+    BuildContext context, {
+    required String imageUrl,
+    required String title,
+  }) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder:
-                (context) => ArticleDetailPage(
-                  title: article['title']!,
-                  image: article['image']!,
-                ),
+            builder: (_) => ArticleDetailPage(
+              title: title,
+              image: imageUrl,
+            ),
           ),
         );
       },
       child: Padding(
         padding: const EdgeInsets.only(bottom: 12),
         child: Card(
-          color: const Color.fromARGB(
-            255,
-            253,
-            253,
-            253,
-          ), // Slightly gray background
+          color: const Color(0xFFFDFDFD),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          elevation: 8, // Increased for thicker shadow
-          shadowColor: Colors.black45, // Darker shadow for visibility
+          elevation: 8,
+          shadowColor: Colors.black45,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -125,17 +126,19 @@ class ArticlePage extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(12),
                 ),
-                child: Image.asset(
-                  article['image']!,
+                child: Image.network(
+                  imageUrl,
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.broken_image, size: 150),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  article['title']!,
+                  title,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
