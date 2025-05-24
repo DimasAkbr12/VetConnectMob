@@ -121,7 +121,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       const Text('Already have an account?'),
                       TextButton(
                         onPressed: () {
-                           Navigator.pushReplacementNamed(context, '/sign-in'); // Gunakan GetX untuk navigasi
+                           Navigator.pushReplacementNamed(context, '/sign-in');
                         },
                         child: const Text(
                           'Sign In',
