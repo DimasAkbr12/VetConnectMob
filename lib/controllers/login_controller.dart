@@ -20,7 +20,6 @@ class LoginController extends GetxController {
     }
 
     isLoading.value = true;
-   
 
     try {
       final response = await LoginService.login(email, password);
@@ -28,7 +27,7 @@ class LoginController extends GetxController {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 && data['token'] != null) {
-  
+
         final token = data['token'];
         print('Login sukses, token: $token');
         Get.snackbar('Sukses', 'Berhasil login');
