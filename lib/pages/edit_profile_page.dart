@@ -1,7 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controllers/edit_profile_controller.dart';
 import 'package:get/get.dart';
-
+import 'package:image_picker/image_picker.dart';
 
 class EditProfilePage extends StatelessWidget {
   const EditProfilePage({super.key});
@@ -41,6 +42,30 @@ class EditProfilePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
+                  // Profile Photo Upload
+                  Center(
+                    child: Obx(() {
+                      return GestureDetector(
+                        onTap: () async {
+                          final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+                          if (pickedFile != null) {
+                            controller.pickImage(File(pickedFile.path));
+                          }
+                        },
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.grey[200],
+                          backgroundImage: controller.selectedImage.value != null
+                              ? FileImage(controller.selectedImage.value!)
+                              : null,
+                          child: controller.selectedImage.value == null
+                              ? const Icon(Icons.camera_alt, size: 40, color: Colors.grey)
+                              : null,
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 20),
                   _buildLabel("Name"),
                   _buildTextField(controller.nameController, "Enter your full name"),
                   const SizedBox(height: 15),
@@ -52,6 +77,9 @@ class EditProfilePage extends StatelessWidget {
                   const SizedBox(height: 15),
                   _buildLabel("Age"),
                   _buildTextField(controller.ageController, "Enter your age", number: true),
+                  const SizedBox(height: 15),
+                  _buildLabel("Address"),
+                  _buildTextField(controller.addressController, "Enter your address"),
                   const SizedBox(height: 15),
                   _buildLabel("Password (optional)"),
                   _buildTextField(controller.passwordController, "Enter your password", password: true),

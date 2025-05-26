@@ -55,10 +55,10 @@ class _ProfilePageState extends State<ProfilePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
+          ),
         centerTitle: true,
         elevation: 0,
       ),
