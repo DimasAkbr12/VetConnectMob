@@ -5,7 +5,7 @@ class ProfileService {
   final String baseUrl = 'https://vetconnectmob-production.up.railway.app/api';
 
   Future<Map<String, dynamic>> getProfile(String token) async {
-    final url = Uri.parse('$baseUrl/user/profile');
+    final url = Uri.parse('$baseUrl/profile');
     final response = await http.get(
       url,
       headers: {
