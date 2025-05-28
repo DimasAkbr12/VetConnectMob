@@ -26,11 +26,10 @@ class CustomBottomNavBar extends StatelessWidget {
         page = const ReportsPage();
         break;
       case 2:
-        page = 
-        NotificationPage();
+        page = NotificationPage();
         break;
       case 3:
-        page = const ProfilePage();
+        page = ProfilePage();
         break;
       default:
         return;
