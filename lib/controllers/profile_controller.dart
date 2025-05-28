@@ -1,30 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:flutter_application_1/services/profile_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileController {
+class ProfileController extends GetxController {
   final ProfileService _service = ProfileService();
 
-  /// Menyimpan status loading
-  bool isLoading = false;
+  var isLoading = false.obs;
+  var profileData = {}.obs;
+  String token = '';
 
-  /// Menyimpan data profil
-  Map<String, dynamic> profileData = {};
+  @override
+  void onInit() {
+    super.onInit();
+    loadTokenAndProfile();
+  }
 
-  /// Token autentikasi
-  String? token;
+  Future<void> loadTokenAndProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token') ?? '';
+    if (token.isNotEmpty) {
+      await loadProfile();
+    }
+  }
 
-  /// Ambil data profil dari service
   Future<void> loadProfile() async {
-    if (token == null) return;
-
     try {
-      isLoading = true;
-      final data = await _service.getProfile(token!);
-      profileData = data;
+      isLoading.value = true;
+      final data = await _service.getProfile(token);
+      profileData.value = data;
     } catch (e) {
       debugPrint('Error loading profile: $e');
     } finally {
-      isLoading = false;
+      isLoading.value = false;
     }
   }
 }
