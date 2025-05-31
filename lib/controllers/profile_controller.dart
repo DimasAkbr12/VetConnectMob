@@ -35,4 +35,6 @@ class ProfileController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  void getMyProfil(double e) {}
 }
