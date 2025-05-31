@@ -57,7 +57,7 @@ class EditProfileController extends GetxController {
 
       if (result.statusCode == 200 && data['success'] == true) {
         Get.snackbar("Sukses", "Profil berhasil diperbarui");
-        Navigator.pop(context, true); // return true to refresh profile
+        Navigator.pop(context, true);
       } else {
         Get.snackbar("Gagal", data['message'] ?? 'Gagal memperbarui profil');
       }
