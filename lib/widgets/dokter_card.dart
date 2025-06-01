@@ -17,10 +17,7 @@ class DokterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(
-        horizontal: isCompact ? 8.0 : 16.0,
-        vertical: 8.0,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 2, vertical: 4),
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -170,24 +167,6 @@ class DokterCard extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.green[700],
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: dokter.jenisKelamin == 'Laki-laki' 
-                          ? Colors.blue[100] 
-                          : Colors.pink[100],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      dokter.jenisKelamin,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: dokter.jenisKelamin == 'Laki-laki' 
-                            ? Colors.blue[700] 
-                            : Colors.pink[700],
-                      ),
                     ),
                   ),
                 ],
