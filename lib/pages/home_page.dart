@@ -8,6 +8,7 @@ import '../pages/doctor_list_page.dart';
 import '../pages/report_page.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../widgets/dokter_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -66,69 +67,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildDoctorCard(BuildContext context, Dokter dokter) {
-    return GestureDetector(
-      onTap: () {
-        // Implementasi navigasi ke detail dokter jika sudah tersedia
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.symmetric(vertical: 12),
-        elevation: 3,
-        color: const Color.fromARGB(255, 253, 253, 253),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(35),
-                child: Image.network(
-                  dokter.foto,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    width: 80,
-                    height: 80,
-                    color: Colors.grey[300],
-                    child: Icon(Icons.person, size: 40, color: Colors.grey[600]),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(dokter.nama, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 5),
-                    const Text('Veterinarian', style: TextStyle(color: Colors.grey, fontSize: 14)),
-                    const SizedBox(height: 5),
-                    Text(
-                      dokter.deskripsi,
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.star, color: Colors.orange, size: 18),
-                  SizedBox(height: 4),
-                  Text('5.0', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,10 +97,10 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildServiceIcon(Icons.local_hospital, 'Doctors', () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) =>  DoctorListPage()));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => DoctorListPage()));
                 }),
                 _buildServiceIcon(Icons.article_outlined, 'Article', () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) =>  ArticlePage()));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => ArticlePage()));
                 }),
                 _buildServiceIcon(Icons.assignment_outlined, 'Report', () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportsPage()));
@@ -176,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                 const Text('Top Doctor', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) =>  DoctorListPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => DoctorListPage()));
                   },
                   child: const Text('See All', style: TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.w500)),
                 ),
@@ -202,13 +140,24 @@ class _HomePageState extends State<HomePage> {
                           : ListView.builder(
                               padding: EdgeInsets.zero,
                               itemCount: dokters.length,
-                              itemBuilder: (context, index) => _buildDoctorCard(context, dokters[index]),
+                              itemBuilder: (context, index) {
+                                final dokter = dokters[index];
+                                return DokterCard(
+                                  dokter: dokter,
+                                  onTap: () {
+                                    // Arahkan ke detail dokter jika sudah tersedia
+                                  },
+                                );
+                              },
                             ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0, backgroundColor: Color.fromARGB(255, 253, 253, 253)),
+      bottomNavigationBar: const CustomBottomNavBar(
+        currentIndex: 0,
+        backgroundColor: Color.fromARGB(255, 253, 253, 253),
+      ),
     );
   }
 }

@@ -1,90 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/doctor.dart';
+import 'package:flutter_application_1/services/doctor.service.dart';
+import 'package:flutter_application_1/widgets/dokter_card.dart';
 
-class DoctorListPage extends StatelessWidget {
-  final List<Map<String, dynamic>> doctors = [
-    {'name': 'Dr. Pawan', 'rating': 5.0, 'image': 'assets/images/dokter6.jpg'},
-    {'name': 'Dr. Wanitha', 'rating': 5.0, 'image': 'assets/images/dokter2.png'},
-    {'name': 'Dr. Udara', 'rating': 5.0, 'image': 'assets/images/dokter3.jpg'},
-    {'name': 'Dr. Surya', 'rating': 5.0, 'image': 'assets/images/dokter4.jpg'},
-    {'name': 'Dr. Pawan', 'rating': 5.0, 'image': 'assets/images/dokter6.jpg'},
-    {'name': 'Dr. Wanitha', 'rating': 5.0, 'image': 'assets/images/dokter2.png'},
-    {'name': 'Dr. Udara', 'rating': 5.0, 'image': 'assets/images/dokter3.jpg'},
-    {'name': 'Dr. Surya', 'rating': 5.0, 'image': 'assets/images/dokter4.jpg'},
-  ];
+class DoctorListPage extends StatefulWidget {
+  const DoctorListPage({super.key});
 
-  DoctorListPage({super.key});
+  @override
+  State<DoctorListPage> createState() => _DoctorListPageState();
+}
 
-  Widget buildDoctorCard(String name, double rating, String image) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      elevation: 4, // Adds shadow effect
-      color: const Color.fromARGB(255, 253, 253, 253), // Slightly gray background for each card
-      child: Container(
-        padding: EdgeInsets.all(16.0),
-        height: 120,
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 35,
-              backgroundImage: AssetImage(image),
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    name,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    'Experienced professional in veterinary medicine.',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(Icons.star, color: Colors.orange),
-                    Text(
-                      '$rating',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+class _DoctorListPageState extends State<DoctorListPage> {
+  late Future<List<Dokter>> _doktersFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _doktersFuture = _fetchDokters();
+  }
+
+  Future<List<Dokter>> _fetchDokters() async {
+    try {
+      final response = await DokterService.getAllDokters();
+      if (response.success) {
+        return response.data;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print("Error fetching dokters: $e");
+      return [];
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set background to white
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'All Doctors',
           style: TextStyle(
             color: Colors.black,
@@ -95,15 +49,15 @@ class DoctorListPage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search, color: Colors.grey),
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 hintText: 'Search a Doctor',
                 filled: true,
                 fillColor: const Color.fromARGB(255, 235, 235, 235),
@@ -112,19 +66,43 @@ class DoctorListPage extends StatelessWidget {
                   borderSide: BorderSide.none,
                 ),
               ),
+              onChanged: (query) {
+                // kamu bisa tambahkan fitur pencarian di sini jika ingin
+              },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: doctors
-                      .map((doctor) => buildDoctorCard(
-                            doctor['name'],
-                            doctor['rating'],
-                            doctor['image'],
-                          ))
-                      .toList(),
-                ),
+              child: FutureBuilder<List<Dokter>>(
+                future: _doktersFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Failed to load doctors: ${snapshot.error}'),
+                    );
+                  } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No doctors found.'));
+                  } else {
+                    final dokters = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: dokters.length,
+                      itemBuilder: (context, index) {
+                        final dokter = dokters[index];
+                        return DokterCard(
+                          dokter: dokter,
+                          isCompact: false,
+                          onTap: () {
+                            // TODO: Navigasi ke detail jika perlu
+                            // Navigator.push(context, MaterialPageRoute(
+                            //   builder: (_) => DoctorDetailPage(dokter: dokter),
+                            // ));
+                          },
+                        );
+                      },
+                    );
+                  }
+                },
               ),
             ),
           ],

@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp( // Gunakan GetMaterialApp, bukan MaterialApp biasa
+    return GetMaterialApp( 
       title: 'VetConnect',
       debugShowCheckedModeBanner: false,
       initialRoute: '/',

@@ -31,9 +31,6 @@ class DokterService {
         },
       );
 
-      print('Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);
         return DokterResponse.fromJson(jsonData);
