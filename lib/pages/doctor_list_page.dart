@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/doctor.dart';
-import 'package:flutter_application_1/services/doctor.service.dart';
+import 'package:flutter_application_1/pages/detail_dokter.dart';
+import 'package:flutter_application_1/services/vet_api_service.dart';
 import 'package:flutter_application_1/widgets/dokter_card.dart';
 
 class DoctorListPage extends StatefulWidget {
@@ -12,6 +13,9 @@ class DoctorListPage extends StatefulWidget {
 
 class _DoctorListPageState extends State<DoctorListPage> {
   late Future<List<Dokter>> _doktersFuture;
+  List<Dokter> _allDokters = [];
+  List<Dokter> _filteredDokters = [];
+  bool _isDataLoaded = false;
 
   @override
   void initState() {
@@ -23,6 +27,9 @@ class _DoctorListPageState extends State<DoctorListPage> {
     try {
       final response = await DokterService.getAllDokters();
       if (response.success) {
+        _allDokters = response.data;
+        _filteredDokters = response.data;
+        _isDataLoaded = true;
         return response.data;
       } else {
         return [];
@@ -31,6 +38,21 @@ class _DoctorListPageState extends State<DoctorListPage> {
       print("Error fetching dokters: $e");
       return [];
     }
+  }
+
+  void _filterDokters(String query) {
+    if (!_isDataLoaded) return;
+    
+    setState(() {
+      if (query.isEmpty) {
+        _filteredDokters = _allDokters;
+      } else {
+        _filteredDokters = _allDokters
+            .where((dokter) =>
+                dokter.nama!.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
   }
 
   @override
@@ -66,9 +88,7 @@ class _DoctorListPageState extends State<DoctorListPage> {
                   borderSide: BorderSide.none,
                 ),
               ),
-              onChanged: (query) {
-                // kamu bisa tambahkan fitur pencarian di sini jika ingin
-              },
+              onChanged: _filterDokters,
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -84,19 +104,27 @@ class _DoctorListPageState extends State<DoctorListPage> {
                   } else if (snapshot.data == null || snapshot.data!.isEmpty) {
                     return const Center(child: Text('No doctors found.'));
                   } else {
-                    final dokters = snapshot.data!;
+                    // Use filtered list for display instead of original data
+                    final doktersToShow = _isDataLoaded ? _filteredDokters : snapshot.data!;
+                    
+                    if (doktersToShow.isEmpty && _isDataLoaded) {
+                      return const Center(child: Text('No doctors match your search.'));
+                    }
+                    
                     return ListView.builder(
-                      itemCount: dokters.length,
+                      itemCount: doktersToShow.length,
                       itemBuilder: (context, index) {
-                        final dokter = dokters[index];
+                        final dokter = doktersToShow[index];
                         return DokterCard(
                           dokter: dokter,
                           isCompact: false,
                           onTap: () {
-                            // TODO: Navigasi ke detail jika perlu
-                            // Navigator.push(context, MaterialPageRoute(
-                            //   builder: (_) => DoctorDetailPage(dokter: dokter),
-                            // ));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailPage(dokter: dokter),
+                              ),
+                            );
                           },
                         );
                       },
