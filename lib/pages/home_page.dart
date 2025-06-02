@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/detail_dokter.dart';
 import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
 import '../models/doctor.dart';
-import '../services/doctor.service.dart';
+import '../services/vet_api_service.dart';
 import '../pages/article_page.dart';
 import '../pages/doctor_list_page.dart';
 import '../pages/report_page.dart';
@@ -62,7 +63,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         const SizedBox(height: 8),
-        Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+        ),
       ],
     );
   }
@@ -91,19 +95,31 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 20),
-            const Text('Service', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              'Service',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildServiceIcon(Icons.local_hospital, 'Doctors', () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => DoctorListPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => DoctorListPage()),
+                  );
                 }),
                 _buildServiceIcon(Icons.article_outlined, 'Article', () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => ArticlePage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ArticlePage()),
+                  );
                 }),
                 _buildServiceIcon(Icons.assignment_outlined, 'Report', () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportsPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ReportsPage()),
+                  );
                 }),
               ],
             ),
@@ -111,45 +127,72 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Top Doctor', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Top Doctor',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => DoctorListPage()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => DoctorListPage()),
+                    );
                   },
-                  child: const Text('See All', style: TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.w500)),
+                  child: const Text(
+                    'See All',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ],
             ),
             Expanded(
-              child: isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : errorMessage != null
+              child:
+                  isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : errorMessage != null
                       ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-                              const SizedBox(height: 16),
-                              const Text('Failed to load doctors'),
-                              ElevatedButton(onPressed: _loadDokters, child: const Text('Retry')),
-                            ],
-                          ),
-                        )
-                      : dokters.isEmpty
-                          ? const Center(child: Text('No doctors available'))
-                          : ListView.builder(
-                              padding: EdgeInsets.zero,
-                              itemCount: dokters.length,
-                              itemBuilder: (context, index) {
-                                final dokter = dokters[index];
-                                return DokterCard(
-                                  dokter: dokter,
-                                  onTap: () {
-                                    // Arahkan ke detail dokter jika sudah tersedia
-                                  },
-                                );
-                              },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 64,
+                              color: Colors.red[300],
                             ),
+                            const SizedBox(height: 16),
+                            const Text('Failed to load doctors'),
+                            ElevatedButton(
+                              onPressed: _loadDokters,
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ),
+                      )
+                      : dokters.isEmpty
+                      ? const Center(child: Text('No doctors available'))
+                      : ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: dokters.length,
+                        itemBuilder: (context, index) {
+                          final dokter = dokters[index];
+                          return DokterCard(
+                            dokter: dokter,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => DetailPage(dokter: dokter),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
             ),
           ],
         ),
