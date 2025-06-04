@@ -103,7 +103,7 @@ class EditProfilePage extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            disabledBackgroundColor: const Color(0xFF497D74).withOpacity(0.6),
+                            disabledBackgroundColor: const Color(0xFF497D74),
                           ),
                           child: controller.isLoading.value
                               ? const CircularProgressIndicator(

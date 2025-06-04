@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/services/profile_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 
 class ProfileController extends GetxController {
   final ProfileService _service = ProfileService();
+  final box = GetStorage();
 
   var isLoading = false.obs;
   var profileData = {}.obs;
@@ -17,11 +18,17 @@ class ProfileController extends GetxController {
   }
 
   Future<void> loadTokenAndProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token') ?? '';
+    await loadToken();
     if (token.isNotEmpty) {
       await loadProfile();
+    } else {
+      debugPrint('Token tidak tersedia!');
     }
+  }
+
+  Future<void> loadToken() async {
+    token = box.read('token') ?? '';
+    debugPrint('Token dimuat: $token');
   }
 
   Future<void> loadProfile() async {
@@ -36,5 +43,4 @@ class ProfileController extends GetxController {
     }
   }
 
-  void getMyProfil(double e) {}
 }

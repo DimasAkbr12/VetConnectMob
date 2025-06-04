@@ -7,6 +7,13 @@ class DetailPage extends StatelessWidget {
 
   const DetailPage({super.key, required this.dokter});
 
+   String formatHarga(int harga) {
+    return 'Rp ${harga.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]}.',
+    )}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

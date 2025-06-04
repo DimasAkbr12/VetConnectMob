@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+
 import '../services/edit_profile_api_service.dart';
 
 class EditProfileController extends GetxController {
+  // Text Editing Controllers
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
@@ -15,6 +17,8 @@ class EditProfileController extends GetxController {
   final addressController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  final box = GetStorage();
 
   var isLoading = false.obs;
   var selectedImage = Rx<File?>(null);
@@ -27,8 +31,8 @@ class EditProfileController extends GetxController {
   }
 
   Future<void> loadToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token') ?? '';
+    token = box.read('token') ?? '';
+    debugPrint('Token dimuat: $token');
   }
 
   void pickImage(File image) {
@@ -37,15 +41,18 @@ class EditProfileController extends GetxController {
 
   Future<void> updateProfile(BuildContext context) async {
     isLoading.value = true;
+
     try {
       final response = await EditProfileService.updateProfile(
         token: token,
-        name: nameController.text,
-        email: emailController.text,
-        noTelp: phoneController.text,
-        umur: int.tryParse(ageController.text),
-        alamat: addressController.text,
-        password: passwordController.text.isNotEmpty ? passwordController.text : null,
+        name: nameController.text.trim(),
+        email: emailController.text.trim(),
+        noTelp: phoneController.text.trim(),
+        umur: int.tryParse(ageController.text.trim()),
+        alamat: addressController.text.trim(),
+        password: passwordController.text.isNotEmpty
+            ? passwordController.text
+            : null,
         passwordConfirmation: confirmPasswordController.text.isNotEmpty
             ? confirmPasswordController.text
             : null,
@@ -53,16 +60,32 @@ class EditProfileController extends GetxController {
       );
 
       final result = await http.Response.fromStream(response);
-      final data = jsonDecode(result.body);
 
-      if (result.statusCode == 200 && data['success'] == true) {
-        Get.snackbar("Sukses", "Profil berhasil diperbarui");
-        Navigator.pop(context, true);
+      if (result.statusCode == 200) {
+        final data = jsonDecode(result.body);
+
+        if (data['success'] == true) {
+          Get.snackbar("Sukses", "Profil berhasil diperbarui",
+              snackPosition: SnackPosition.BOTTOM);
+          Navigator.pop(context, true);
+        } else {
+          Get.snackbar(
+            "Gagal",
+            data['message'] ?? 'Gagal memperbarui profil',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
       } else {
-        Get.snackbar("Gagal", data['message'] ?? 'Gagal memperbarui profil');
+        debugPrint("Status code: ${result.statusCode}");
+        debugPrint("Response body:\n${result.body}");
+
+        Get.snackbar("Gagal", "Update gagal: ${result.statusCode}",
+            snackPosition: SnackPosition.BOTTOM);
       }
     } catch (e) {
-      Get.snackbar("Error", "Terjadi kesalahan: $e");
+      debugPrint("Exception during profile update: $e");
+      Get.snackbar("Error", "Terjadi kesalahan: $e",
+          snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading.value = false;
     }

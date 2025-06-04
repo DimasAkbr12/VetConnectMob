@@ -28,7 +28,7 @@ class BookingApiService {
     }
   }
 
-  static Future<bool> submitBooking({
+  static Future<int?> submitBooking({
     required BookingRequest booking,
     required String? token,
   }) async {
@@ -48,7 +48,9 @@ class BookingApiService {
     print('Token: $token');
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
+      final jsonData = json.decode(response.body);
+      final bookingId = jsonData['data']['id'];
+      return bookingId;
     } else {
       throw Exception('Booking failed: ${response.statusCode}');
     }

@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controllers/booking_controller.dart';
-import 'package:flutter_application_1/pages/payment_page.dart';
+import 'package:flutter_application_1/pages/my_order_page.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BookAppointmentPage extends StatefulWidget {
   final int doctorId;
   final String doctorName;
   final String imageUrl;
-  final int doctorPrice; 
+  final int doctorPrice;
 
   const BookAppointmentPage({
     super.key,
     required this.doctorId,
     required this.doctorName,
     required this.imageUrl,
-    required this.doctorPrice, 
+    required this.doctorPrice,
   });
 
   @override
@@ -38,10 +39,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   }
 
   String formatHarga(int harga) {
-    return 'Rp ${harga.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]}.',
-    )}';
+    return 'Rp ${harga.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}';
   }
 
   @override
@@ -67,7 +65,11 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF497D74), size: 20),
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Color(0xFF497D74),
+              size: 20,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -119,19 +121,22 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF497D74).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: const Icon(
-                              Icons.person,
-                              color: Color(0xFF497D74),
-                              size: 40,
-                            ),
-                          ),
+                          errorBuilder:
+                              (context, error, stackTrace) => Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFF497D74,
+                                  ).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: const Icon(
+                                  Icons.person,
+                                  color: Color(0xFF497D74),
+                                  size: 40,
+                                ),
+                              ),
                         ),
                       ),
                     ),
@@ -150,7 +155,10 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFF497D74).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
@@ -176,7 +184,10 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                           ),
                           const SizedBox(height: 6),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.green.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(6),
@@ -219,7 +230,8 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                         itemCount: controller.jadwalList.length,
                         itemBuilder: (context, index) {
                           final item = controller.jadwalList[index];
-                          final isSelected = controller.selectedDateId == item.tanggalId;
+                          final isSelected =
+                              controller.selectedDateId == item.tanggalId;
                           return GestureDetector(
                             onTap: () {
                               controller.selectDate(item.tanggalId);
@@ -227,25 +239,37 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               margin: const EdgeInsets.only(right: 12),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
                               decoration: BoxDecoration(
-                                gradient: isSelected
-                                    ? const LinearGradient(
-                                        colors: [Color(0xFF497D74), Color(0xFF5A8B81)],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      )
-                                    : null,
+                                gradient:
+                                    isSelected
+                                        ? const LinearGradient(
+                                          colors: [
+                                            Color(0xFF497D74),
+                                            Color(0xFF5A8B81),
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        )
+                                        : null,
                                 color: isSelected ? null : Colors.white,
                                 border: Border.all(
-                                  color: isSelected ? Colors.transparent : const Color(0xFFE2E8F0),
+                                  color:
+                                      isSelected
+                                          ? Colors.transparent
+                                          : const Color(0xFFE2E8F0),
                                   width: 1.5,
                                 ),
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   if (isSelected)
                                     BoxShadow(
-                                      color: const Color(0xFF497D74).withOpacity(0.3),
+                                      color: const Color(
+                                        0xFF497D74,
+                                      ).withOpacity(0.3),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),
@@ -259,7 +283,10 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: isSelected ? Colors.white : const Color(0xFF2D3748),
+                                      color:
+                                          isSelected
+                                              ? Colors.white
+                                              : const Color(0xFF2D3748),
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -267,7 +294,10 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                                     "Available",
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: isSelected ? Colors.white.withOpacity(0.8) : Colors.grey[600],
+                                      color:
+                                          isSelected
+                                              ? Colors.white.withOpacity(0.8)
+                                              : Colors.grey[600],
                                     ),
                                   ),
                                 ],
@@ -302,49 +332,76 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                       Wrap(
                         spacing: 12,
                         runSpacing: 12,
-                        children: controller.jadwalList
-                            .firstWhere((e) => e.tanggalId == controller.selectedDateId!)
-                            .waktuList
-                            .map((waktu) {
-                          final isSelected = controller.selectedTimeId == waktu.waktuId;
-                          return GestureDetector(
-                            onTap: () => controller.selectTime(waktu.waktuId),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              decoration: BoxDecoration(
-                                gradient: isSelected
-                                    ? const LinearGradient(
-                                        colors: [Color(0xFF497D74), Color(0xFF5A8B81)],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      )
-                                    : null,
-                                color: isSelected ? null : Colors.white,
-                                border: Border.all(
-                                  color: isSelected ? Colors.transparent : const Color(0xFFE2E8F0),
-                                  width: 1.5,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  if (isSelected)
-                                    BoxShadow(
-                                      color: const Color(0xFF497D74).withOpacity(0.3),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
+                        children:
+                            controller.jadwalList
+                                .firstWhere(
+                                  (e) =>
+                                      e.tanggalId == controller.selectedDateId!,
+                                )
+                                .waktuList
+                                .map((waktu) {
+                                  final isSelected =
+                                      controller.selectedTimeId ==
+                                      waktu.waktuId;
+                                  return GestureDetector(
+                                    onTap:
+                                        () => controller.selectTime(
+                                          waktu.waktuId,
+                                        ),
+                                    child: AnimatedContainer(
+                                      duration: const Duration(
+                                        milliseconds: 200,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient:
+                                            isSelected
+                                                ? const LinearGradient(
+                                                  colors: [
+                                                    Color(0xFF497D74),
+                                                    Color(0xFF5A8B81),
+                                                  ],
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                )
+                                                : null,
+                                        color: isSelected ? null : Colors.white,
+                                        border: Border.all(
+                                          color:
+                                              isSelected
+                                                  ? Colors.transparent
+                                                  : const Color(0xFFE2E8F0),
+                                          width: 1.5,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          if (isSelected)
+                                            BoxShadow(
+                                              color: const Color(
+                                                0xFF497D74,
+                                              ).withOpacity(0.3),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        waktu.jam,
+                                        style: TextStyle(
+                                          color:
+                                              isSelected
+                                                  ? Colors.white
+                                                  : const Color(0xFF2D3748),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                                     ),
-                                ],
-                              ),
-                              child: Text(
-                                waktu.jam,
-                                style: TextStyle(
-                                  color: isSelected ? Colors.white : const Color(0xFF2D3748),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                                  );
+                                })
+                                .toList(),
                       ),
                     ],
                   ),
@@ -391,11 +448,16 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFE2E8F0),
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(color: Color(0xFF497D74), width: 2),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF497D74),
+                              width: 2,
+                            ),
                           ),
                           filled: true,
                           fillColor: Colors.white,
@@ -417,7 +479,9 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFF497D74).withOpacity(0.2)),
+                  border: Border.all(
+                    color: const Color(0xFF497D74).withOpacity(0.2),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -495,13 +559,20 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () async {
-                    final success = await controller.submitBooking(
+                    final bookingId = await controller.submitBooking(
                       vetId: widget.doctorId,
                       totalPrice: widget.doctorPrice,
                       paymentMethod: 'cash',
                     );
-                    if (success) {
-                      Get.to(() => const PaymentPage());
+
+                    if (bookingId != null) {
+                      controller.clearBooking();
+                      Get.to(() => MyOrderPage(orderId: bookingId));
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setInt('bookingId', bookingId);
+                      Get.to(() => MyOrderPage(orderId: bookingId));
+                    } else {
+                      print("error tolol");
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -511,7 +582,9 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ).copyWith(
-                    backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                    backgroundColor: MaterialStateProperty.all(
+                      Colors.transparent,
+                    ),
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
@@ -554,7 +627,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
             ],
           ),

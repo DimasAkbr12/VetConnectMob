@@ -21,6 +21,7 @@ class EditProfileService {
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['name'] = name;
     request.fields['email'] = email;
+    request.headers['Accept'] = 'application/json';
     
     if (noTelp != null) request.fields['no_telp'] = noTelp;
     if (umur != null) request.fields['umur'] = umur.toString();
