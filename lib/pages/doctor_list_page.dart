@@ -49,7 +49,7 @@ class _DoctorListPageState extends State<DoctorListPage> {
       } else {
         _filteredDokters = _allDokters
             .where((dokter) =>
-                dokter.nama!.toLowerCase().contains(query.toLowerCase()))
+                dokter.nama.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });

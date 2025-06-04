@@ -12,7 +12,7 @@ class BookingController extends GetxController {
   final _keluhan = ''.obs;
   final _isLoading = false.obs;
   final _errorMessage = RxString('');
-  
+
   final _box = GetStorage();
 
   // Getters
@@ -67,29 +67,29 @@ class BookingController extends GetxController {
       _errorMessage.value = 'Please select a date';
       return false;
     }
-    
+
     if (_selectedTimeId.value == null) {
       _errorMessage.value = 'Please select a time slot';
       return false;
     }
-    
+
     if (_keluhan.value.isEmpty) {
       _errorMessage.value = 'Please describe your complaint';
       return false;
     }
-    
+
     return true;
   }
 
   /// Submits the booking request
-  Future<bool> submitBooking({
+  Future<int?> submitBooking({
     required int vetId,
     required int totalPrice,
     required String paymentMethod,
   }) async {
     if (!_validateBookingFields()) {
       Get.snackbar('Incomplete Data', _errorMessage.value!);
-      return false;
+      return null;
     }
 
     try {
@@ -105,24 +105,26 @@ class BookingController extends GetxController {
         metodePembayaran: paymentMethod,
       );
 
-      final success = await BookingApiService.submitBooking(
+      final bookingId = await BookingApiService.submitBooking(
         booking: bookingRequest,
         token: token,
       );
 
-      if (!success) {
+      if (bookingId == null) {
         _errorMessage.value = 'Failed to create booking';
         Get.snackbar('Error', _errorMessage.value);
       }
 
-      return success;
+      return bookingId;
     } catch (e) {
       _errorMessage.value = 'Booking failed: ${e.toString()}';
       Get.snackbar('Error', _errorMessage.value);
-      return false;
+      return null;
     } finally {
       _isLoading.value = false;
     }
+
+    
   }
 
   /// Clears all selections
