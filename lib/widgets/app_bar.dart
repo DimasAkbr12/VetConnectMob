@@ -14,11 +14,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -26,22 +22,33 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: Obx(() {
           final profile = profileController.profileData;
           final name = profile['name'] ?? 'Guest User';
-          final location = profile['alamat'] != null && profile['alamat'].toString().isNotEmpty
-              ? '📍 ${profile['alamat']}'
-              : '📍 Unknown';
+          final location =
+              profile['alamat'] != null &&
+                      profile['alamat'].toString().isNotEmpty
+                  ? '📍 ${profile['alamat']}'
+                  : '📍 Unknown';
+          final fotoPath = profile['foto'];
+          final baseUrl =
+              'http://10.0.2.2:8000';
+          final fullFotoUrl =
+              (fotoPath != null && fotoPath.toString().isNotEmpty)
+                  ? '$baseUrl$fotoPath'
+                  : null;
 
           return Row(
             children: [
               // Profile Section
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey[200],
-                ),
-                child: const Icon(Icons.person, size: 30, color: Colors.grey),
+              CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.grey[200],
+                backgroundImage:
+                    (fullFotoUrl != null) ? NetworkImage(fullFotoUrl) : null,
+                child:
+                    (fullFotoUrl == null)
+                        ? const Icon(Icons.person, size: 30, color: Colors.grey)
+                        : null,
               ),
+
               const SizedBox(width: 15),
 
               // User Info
@@ -52,10 +59,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   children: [
                     Text(
                       'Selamat Datang',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -69,21 +73,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     Text(
                       location,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
               ),
               GestureDetector(
                 onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => NotificationPage()),
-                    );
-                  },
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NotificationPage()),
+                  );
+                },
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -119,5 +120,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(100); // Tinggi AppBar diperbesar
+  Size get preferredSize => const Size.fromHeight(100);
 }

@@ -4,60 +4,64 @@ import '../controllers/article_controller.dart';
 import '../pages/detail_article.dart';
 import '../widgets/bottom_nav_bar.dart';
 
-
 class ArticlePage extends StatelessWidget {
   final ArticleController controller = Get.put(ArticleController());
 
-
   ArticlePage({super.key});
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text(
-          'Article',
+          'Artikel',
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
           ),
         ),
+        backgroundColor: Colors.white,
+        elevation: 2,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           children: [
             _buildSearchBar(),
+            const SizedBox(height: 10),
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-
                 if (controller.articles.isEmpty) {
                   return const Center(child: Text('Tidak ada artikel.'));
                 }
 
-
-                return ListView.builder(
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 0.75,
+                  ),
                   itemCount: controller.articles.length,
                   itemBuilder: (context, index) {
                     final article = controller.articles[index];
                     return _buildArticleCard(
                       context,
-                      imageUrl: article.gambar.isNotEmpty
-                          ? article.gambar.first
-                          : '', // fallback jika kosong
+                      imageUrl:
+                          article.gambar.isNotEmpty ? article.gambar.first : '',
                       title: article.judul,
+                      articleId: article.id
                     );
                   },
                 );
@@ -66,25 +70,23 @@ class ArticlePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        child: const CustomBottomNavBar(currentIndex: 0),
-      ),
+      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0),
     );
   }
 
-
   Widget _buildSearchBar() {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
+        ],
       ),
       child: const TextField(
         decoration: InputDecoration(
-          hintText: 'Search...',
+          hintText: 'Cari artikel...',
           border: InputBorder.none,
           prefixIcon: Icon(Icons.search),
         ),
@@ -92,61 +94,55 @@ class ArticlePage extends StatelessWidget {
     );
   }
 
-
   Widget _buildArticleCard(
     BuildContext context, {
     required String imageUrl,
     required String title,
+    required int articleId,
   }) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => ArticleDetailPage(
-              title: title,
-              image: imageUrl,
-            ),
+            builder: (_) => ArticleDetailPage(articleId: articleId),
           ),
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: Card(
-          color: const Color(0xFFFDFDFD),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 8,
-          shadowColor: Colors.black45,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-                child: Image.network(
-                  imageUrl,
-                  height: 150,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.broken_image, size: 150),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 6,
+        shadowColor: Colors.black26,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
+              child: Image.network(
+                imageUrl,
+                height: 120,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder:
+                    (context, error, stackTrace) =>
+                        const Icon(Icons.broken_image, size: 120),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

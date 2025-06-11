@@ -3,15 +3,15 @@ import 'dart:convert';
 import '../models/jadwal.dart';
 import '../models/booking_request.dart';
 
+const String baseUrl = 'http://10.0.2.2:8000'; // untuk emulator
+
 class BookingApiService {
   static Future<List<Jadwal>> fetchVetSchedule({
     required int vetId,
     required String? token,
   }) async {
     final response = await http.get(
-      Uri.parse(
-        'https://vetconnectmob-production.up.railway.app/api/vets/$vetId/jadwal',
-      ),
+      Uri.parse('$baseUrl/api/vets/$vetId/jadwal'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ class BookingApiService {
     required String? token,
   }) async {
     final response = await http.post(
-      Uri.parse('https://vetconnectmob-production.up.railway.app/api/bookings'),
+      Uri.parse('$baseUrl/api/bookings'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
