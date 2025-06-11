@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class DokterService {
   static const String baseUrl = 
-      'https://vetconnectmob-production.up.railway.app/api';
+      'http://10.0.2.2:8000/api';
 
   
   static Future<String?> getToken() async {

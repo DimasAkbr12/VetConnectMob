@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ProfileService {
-  final String baseUrl = 'https://vetconnectmob-production.up.railway.app/api';
+  final String baseUrl = 'http://10.0.2.2:8000/api';
 
   Future<Map<String, dynamic>> getProfile(String token) async {
     final url = Uri.parse('$baseUrl/profile');

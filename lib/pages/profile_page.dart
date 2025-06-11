@@ -20,13 +20,13 @@ class _ProfilePageState extends State<ProfilePage> {
     _loadBookingId();
   }
 
-Future<void> _loadBookingId() async {
-  final prefs = await SharedPreferences.getInstance();
-  final storedBookingId = prefs.getInt('bookingId'); // ambil sebagai int
-  setState(() {
-    bookingId = storedBookingId;
-  });
-}
+  Future<void> _loadBookingId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedBookingId = prefs.getInt('bookingId'); // ambil sebagai int
+    setState(() {
+      bookingId = storedBookingId;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,10 @@ Future<void> _loadBookingId() async {
               name: data['name'] ?? '-',
               email: data['email'] ?? '-',
               phone: data['no_telp'] ?? '-',
-              fotoUrl: data['foto'],
+              fotoUrl:
+                  data['foto'] != null
+                      ? 'http://10.0.2.2:8000${data['foto']}'
+                      : null,
             ),
             const SizedBox(height: 20),
             ListTile(
@@ -121,9 +124,11 @@ Future<void> _loadBookingId() async {
       children: [
         CircleAvatar(
           radius: 40,
-          backgroundImage: fotoUrl != null && fotoUrl.isNotEmpty
-              ? NetworkImage(fotoUrl)
-              : const AssetImage('assets/images/profile.jpg') as ImageProvider,
+          backgroundImage:
+              fotoUrl != null && fotoUrl.isNotEmpty
+                  ? NetworkImage(fotoUrl)
+                  : const AssetImage('assets/images/profile.jpg')
+                      as ImageProvider,
         ),
         const SizedBox(height: 10),
         Text(

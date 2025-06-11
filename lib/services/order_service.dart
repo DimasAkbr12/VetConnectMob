@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/order_model.dart';
 
 class OrderService {
-  final String baseUrl = 'https://vetconnectmob-production.up.railway.app/api';
+  final String baseUrl = 'http://10.0.2.2:8000/api';
 
   Future<OrderModel> getOrderById(int id, String token) async {
     final response = await http.get(
