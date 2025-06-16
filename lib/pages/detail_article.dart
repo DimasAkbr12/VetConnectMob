@@ -1,386 +1,383 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import '../models/article.dart';
-import '../services/getarticle_api_service.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:get_storage/get_storage.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final int articleId;
 
-  const ArticleDetailPage({super.key, required this.articleId});
+  const ArticleDetailPage({required this.articleId});
 
   @override
-  State<ArticleDetailPage> createState() => _ArticleDetailPageState();
+  _ArticleDetailPageState createState() => _ArticleDetailPageState();
 }
 
 class _ArticleDetailPageState extends State<ArticleDetailPage> {
-  late Future<Article> _articleFuture;
-  int _currentImageIndex = 0;
+  Map<String, dynamic>? article;
+  bool isLoading = true;
+  final box = GetStorage();
 
   @override
   void initState() {
     super.initState();
-    _articleFuture = ArticleApiService.fetchArticleById(widget.articleId);
+    fetchDetail();
+  }
+
+  Future<void> fetchDetail() async {
+    final token = box.read('token');
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:8000/api/articles/${widget.articleId}'),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      setState(() {
+        article = json['data'];
+        isLoading = false;
+      });
+    } else {
+      setState(() => isLoading = false);
+      Get.snackbar(
+        "Error", 
+        "Gagal mengambil detail artikel",
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+        icon: Icon(Icons.error_outline, color: Colors.red.shade800),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text(
-          'Detail Artikel',
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: FutureBuilder<Article>(
-        future: _articleFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Memuat artikel...'),
-                ],
-              ),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: Colors.red[300],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Gagal memuat artikel',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${snapshot.error}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _articleFuture = ArticleApiService.fetchArticleById(widget.articleId);
-                        });
-                      },
-                      child: const Text('Coba Lagi'),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          final article = snapshot.data!;
-          
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Image Gallery Section
-                if (article.gambar.isNotEmpty) _buildImageGallery(article.gambar),
-                
-                // Content Section
-                Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Title
-                        Text(
-                          article.judul,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                            height: 1.3,
-                          ),
-                        ),
-                        
-                        const SizedBox(height: 16),
-                        
-                        // Author and Date Info
-                        _buildAuthorInfo(article),
-                        
-                        const SizedBox(height: 24),
-                        
-                        // Content
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            article.isi,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black87,
-                              height: 1.6,
-                            ),
-                            textAlign: TextAlign.justify,
-                          ),
-                        ),
-                        
-                        const SizedBox(height: 24),
-                        
-                        // Author Card
-                        if (article.vet != null) _buildAuthorCard(article.vet!),
-                        
-                        const SizedBox(height: 32),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildImageGallery(List<String> images) {
-    return Container(
-      height: 250,
-      child: Stack(
-        children: [
-          PageView.builder(
-            itemCount: images.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentImageIndex = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              return Container(
-                width: double.infinity,
-                child: Image.network(
-                  images[index],
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.grey[200],
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.broken_image, size: 64, color: Colors.grey),
-                        SizedBox(height: 8),
-                        Text('Gambar tidak dapat dimuat'),
-                      ],
-                    ),
-                  ),
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      color: Colors.grey[200],
-                      child: const Center(child: CircularProgressIndicator()),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          
-          // Image Indicators
-          if (images.length > 1)
-            Positioned(
-              bottom: 16,
-              left: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: images.asMap().entries.map((entry) {
-                  return Container(
-                    width: 8,
-                    height: 8,
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _currentImageIndex == entry.key 
-                          ? Colors.white 
-                          : Colors.white.withOpacity(0.4),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          
-          // Image Counter
-          if (images.length > 1)
-            Positioned(
-              top: 16,
-              right: 16,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Text(
-                  '${_currentImageIndex + 1}/${images.length}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAuthorInfo(Article article) {
-    final dateFormat = DateFormat('dd MMMM yyyy', 'id_ID');
-    final formattedDate = dateFormat.format(article.createdAt);
-    
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue[100]!),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.person, color: Colors.blue[600], size: 20),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Oleh: ${article.vet?.nama ?? 'Tidak diketahui'}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.blue[800],
-                  ),
-                ),
-                Text(
-                  formattedDate,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.blue[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAuthorCard(Vet vet) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Tentang Penulis',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.grey[50],
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.grey[200],
-                backgroundImage: vet.foto != null 
-                    ? NetworkImage(vet.fotoUrl ?? '')
-                    : null,
-                child: vet.foto == null 
-                    ? const Icon(Icons.person, size: 30, color: Colors.grey)
-                    : null,
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.green.shade600),
+                strokeWidth: 3,
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      vet.nama,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Alumni ${vet.alumni}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'STR: ${vet.str} | SIP: ${vet.sip}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                  ],
+              SizedBox(height: 16),
+              Text(
+                'Memuat artikel...',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 16,
                 ),
               ),
             ],
+          ),
+        ),
+      );
+    }
+
+    final vet = article?['vet'];
+
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      body: CustomScrollView(
+        slivers: [
+          // App Bar dengan gambar hero
+          SliverAppBar(
+            expandedHeight: 250,
+            pinned: true,
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: Container(
+              margin: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.black87),
+                onPressed: () => Get.back(),
+              ),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              background: article?['gambar'] != null
+                  ? Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.network(
+                          'http://10.0.2.2:8000${article!['gambar']}',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: Colors.grey[300],
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 80,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        ),
+                        // Gradient overlay
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.3),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Container(
+                      color: Colors.grey[300],
+                      child: Icon(
+                        Icons.article,
+                        size: 80,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+            ),
+          ),
+
+          // Konten artikel
+          SliverToBoxAdapter(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Judul artikel
+                    Container(
+                      padding: EdgeInsets.only(bottom: 16),
+                      child: Text(
+                        article?['judul'] ?? '',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+
+                    // Metadata artikel
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green.shade100),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.access_time,
+                            size: 16,
+                            color: Colors.green.shade600,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Artikel Kesehatan Hewan',
+                            style: TextStyle(
+                              color: Colors.green.shade700,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 24),
+
+                    // Isi artikel
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey[200]!),
+                      ),
+                      child: Text(
+                        article?['isi'] ?? '',
+                        style: TextStyle(
+                          fontSize: 16,
+                          height: 1.6,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 32),
+
+                    // Info dokter
+                    if (vet != null) ...[
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.green.shade50,
+                              Colors.white,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.green.shade100),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.green.withOpacity(0.08),
+                              blurRadius: 12,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.person_pin,
+                                  color: Colors.green.shade600,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Ditulis oleh',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.green.shade800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 8,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 32,
+                                    backgroundColor: Colors.green.shade100,
+                                    backgroundImage: vet['foto_url'] != null
+                                        ? NetworkImage(vet['foto_url'])
+                                        : null,
+                                    child: vet['foto_url'] == null
+                                        ? Icon(
+                                            Icons.person,
+                                            size: 32,
+                                            color: Colors.green.shade600,
+                                          )
+                                        : null,
+                                    onBackgroundImageError: (_, __) {},
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        vet['nama'] ?? 'Dokter Hewan',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.shade100,
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Text(
+                                          'Dokter Hewan Profesional',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.green.shade700,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      if (vet['email'] != null)
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.email,
+                                              size: 14,
+                                              color: Colors.grey[600],
+                                            ),
+                                            SizedBox(width: 4),
+                                            Expanded(
+                                              child: Text(
+                                                vet['email'],
+                                                style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: 14,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
+                    SizedBox(height: 17),
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       ),

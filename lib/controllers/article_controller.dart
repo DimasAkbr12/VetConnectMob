@@ -1,30 +1,20 @@
 import 'package:get/get.dart';
 import '../models/article.dart';
-import '../services/getarticle_api_service.dart';
-
+import '../services/article_api_service.dart';
 
 class ArticleController extends GetxController {
-  var isLoading = true.obs;
-  var articles = <Article>[].obs;
+  final articles = <Article>[].obs;
+  final isLoading = false.obs;
+  final service = ArticleService();
 
-
-  @override
-  void onInit() {
-    super.onInit();
-    fetchArticles();
-  }
-
-
-  void fetchArticles() async {
+  Future<void> fetchArticles() async {
     try {
-      isLoading(true);
-      final fetchedArticles = await ArticleApiService.fetchArticles();
-      articles.assignAll(fetchedArticles);
+      isLoading.value = true;
+      articles.value = await service.fetchAllArticles();
     } catch (e) {
       Get.snackbar('Error', e.toString());
-      articles.clear(); // Clear jika error
     } finally {
-      isLoading(false);
+      isLoading.value = false;
     }
   }
 }

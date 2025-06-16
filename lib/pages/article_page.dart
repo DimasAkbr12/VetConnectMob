@@ -1,149 +1,230 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/detail_article.dart';
 import 'package:get/get.dart';
 import '../controllers/article_controller.dart';
-import '../pages/detail_article.dart';
-import '../widgets/bottom_nav_bar.dart';
 
 class ArticlePage extends StatelessWidget {
   final ArticleController controller = Get.put(ArticleController());
 
-  ArticlePage({super.key});
-
   @override
   Widget build(BuildContext context) {
+    controller.fetchArticles();
+
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'Artikel',
+        title: Text(
+          'Artikel Terbaru',
           style: TextStyle(
-            color: Colors.black87,
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
-        backgroundColor: Colors.white,
-        elevation: 2,
+        elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          children: [
-            _buildSearchBar(),
-            const SizedBox(height: 10),
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (controller.articles.isEmpty) {
-                  return const Center(child: Text('Tidak ada artikel.'));
-                }
-
-                return GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemCount: controller.articles.length,
-                  itemBuilder: (context, index) {
-                    final article = controller.articles[index];
-                    return _buildArticleCard(
-                      context,
-                      imageUrl:
-                          article.gambar.isNotEmpty ? article.gambar.first : '',
-                      title: article.judul,
-                      articleId: article.id
-                    );
-                  },
-                );
-              }),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search, color: Colors.white),
+            onPressed: () {
+              // Implementasi search
+            },
+          ),
         ],
       ),
-      child: const TextField(
-        decoration: InputDecoration(
-          hintText: 'Cari artikel...',
-          border: InputBorder.none,
-          prefixIcon: Icon(Icons.search),
-        ),
-      ),
-    );
-  }
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.green[700]!),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Memuat artikel...',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
 
-  Widget _buildArticleCard(
-    BuildContext context, {
-    required String imageUrl,
-    required String title,
-    required int articleId,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ArticleDetailPage(articleId: articleId),
+        if (controller.articles.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.article_outlined,
+                  size: 80,
+                  color: Colors.grey[400],
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Belum ada artikel',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            controller.fetchArticles();
+          },
+          color: Colors.green[700],
+          child: ListView.builder(
+            padding: EdgeInsets.all(16),
+            itemCount: controller.articles.length,
+            itemBuilder: (context, index) {
+              final article = controller.articles[index];
+              return Container(
+                margin: EdgeInsets.only(bottom: 16),
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.circular(12),
+                  shadowColor: Colors.grey.withOpacity(0.3),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () {
+                      Get.to(
+                        () => ArticleDetailPage(articleId: article.id),
+                        transition: Transition.rightToLeft,
+                        duration: Duration(milliseconds: 300),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Gambar artikel
+                          ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                            child: Container(
+                              height: 200,
+                              width: double.infinity,
+                              child: Image.network(
+                                article.gambar,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                  color: Colors.grey[200],
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.image_not_supported,
+                                        size: 40,
+                                        color: Colors.grey[400],
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        'Gambar tidak tersedia',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    height: 200,
+                                    color: Colors.grey[200],
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded /
+                                                loadingProgress.expectedTotalBytes!
+                                            : null,
+                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                            Colors.green[700]!),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          // Konten artikel
+                          Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  article.judul,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[800],
+                                    height: 1.3,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 16,
+                                      color: Colors.grey[500],
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Baca selengkapnya',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 16,
+                                      color: Colors.green[700],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         );
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 6,
-        shadowColor: Colors.black26,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
-              ),
-              child: Image.network(
-                imageUrl,
-                height: 120,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder:
-                    (context, error, stackTrace) =>
-                        const Icon(Icons.broken_image, size: 120),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
+      }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          controller.fetchArticles();
+        },
+        backgroundColor: Colors.green[700],
+        child: Icon(Icons.refresh, color: Colors.white),
+        tooltip: 'Refresh artikel',
       ),
     );
   }
