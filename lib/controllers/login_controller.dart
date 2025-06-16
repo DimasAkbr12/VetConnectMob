@@ -30,10 +30,14 @@ class LoginController extends GetxController {
 
       if (response.statusCode == 200 && data['token'] != null) {
         final token = data['token'];
-        print('Login sukses, token: $token');
+        final userId = data['user']['id']; // Ambil user ID dari response
 
-        // Simpan token ke GetStorage
+        print('Login sukses, token: $token');
+        print('User ID: $userId');
+
+        // Simpan token dan user_id ke GetStorage
         await box.write('token', token);
+        await box.write('user_id', userId);
 
         Get.snackbar('Sukses', 'Berhasil login');
         Navigator.pushReplacementNamed(context, '/home');

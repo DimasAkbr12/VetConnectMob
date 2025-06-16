@@ -1,3 +1,5 @@
+import 'package:flutter_application_1/models/booking.dart';
+import 'package:flutter_application_1/models/booking_detail.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/jadwal.dart';
@@ -53,6 +55,71 @@ class BookingApiService {
       return bookingId;
     } else {
       throw Exception('Booking failed: ${response.statusCode}');
+    }
+  }
+
+  static Future<BookingDetail> fetchBookingById({
+    required int bookingId,
+    required String? token,
+  }) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/bookings/$bookingId'),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return BookingDetail.fromJson(jsonData['data']);
+    } else {
+      throw Exception('Failed to load booking detail: ${response.statusCode}');
+    }
+  }
+
+  static Future<Booking> fetchBookingByUserId({
+    required int userId,
+    required String? token,
+  }) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/bookings/$userId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return Booking.fromJson(jsonData['data']);
+    } else {
+      throw Exception('Failed to load booking data');
+    }
+  }
+
+  static Future<List<Booking>> fetchAllBookings({
+    required int userId,
+    required String? token,
+  }) async {
+    final response = await http.get(
+      Uri.parse(
+        '$baseUrl/api/bookings',
+      ), // sesuaikan endpoint sesuai backend
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    print('Status Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      final List<dynamic> bookingsJson = jsonData['data'];
+      return bookingsJson.map((json) => Booking.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load bookings: ${response.statusCode}');
     }
   }
 }
