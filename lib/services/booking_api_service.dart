@@ -1,56 +1,76 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/jadwal.dart';
-import '../models/booking_request.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_application_1/models/jadwal.dart';
 
-class BookingApiService {
-  static Future<List<Jadwal>> fetchVetSchedule({
-    required int vetId,
-    required String? token,
-  }) async {
+class BookingService {
+  static const String baseUrl = 'http://10.0.2.2:8000/api';
+
+  static Future<String?> getToken() async {
+    final box = GetStorage();
+    return box.read('token');
+  }
+
+  static Future<List<Jadwal>> getJadwal(int vetId) async {
+    final token = await getToken();
     final response = await http.get(
-      Uri.parse(
-        'https://vetconnectmob-production.up.railway.app/api/vets/$vetId/jadwal',
-      ),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+      Uri.parse('$baseUrl/vets/$vetId/jadwal'),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
     );
 
     if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-      return (jsonData['jadwal'] as List)
-          .map((data) => Jadwal.fromJson(data))
-          .toList();
+      final data = json.decode(response.body);
+      final List jadwalList = data['jadwal'];
+      return jadwalList.map((j) => Jadwal.fromJson(j)).toList();
     } else {
-      throw Exception('Failed to load schedule: ${response.statusCode}');
+      throw Exception("Gagal mengambil jadwal");
     }
   }
 
-  static Future<bool> submitBooking({
-    required BookingRequest booking,
-    required String? token,
+  static Future<bool> bookAppointment({
+    required int vetId,
+    required int vetDateId,
+    required int vetTimeId,
+    required String keluhan,
+    required int totalHarga,
+    required String metodePembayaran,
   }) async {
-    final response = await http.post(
-      Uri.parse('https://vetconnectmob-production.up.railway.app/api/bookings'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: json.encode(booking.toJson()),
-    );
+    try {
+      final token = await getToken();
+      if (token == null) throw Exception("Token tidak ditemukan");
 
-    print('Status Code: ${response.statusCode}');
-    print('Response Body: ${response.body}');
-    print('Request Body: ${json.encode(booking.toJson())}');
-    print('Token: $token');
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/bookings'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode({
+              "vet_id": vetId,
+              "vet_date_id": vetDateId,
+              "vet_time_id": vetTimeId,
+              "keluhan": keluhan,
+              "total_harga": totalHarga,
+              "metode_pembayaran": metodePembayaran,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    } else {
-      throw Exception('Booking failed: ${response.statusCode}');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonData = json.decode(response.body);
+        print("Booking response JSON: $jsonData");
+
+        return jsonData['success'] == true;
+      } else {
+        print("Booking gagal dengan status: ${response.statusCode}");
+        print("Response: ${response.body}");
+        throw Exception("Gagal booking: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error saat booking: $e");
+      rethrow;
     }
   }
 }

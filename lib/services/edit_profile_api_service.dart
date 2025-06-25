@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class EditProfileService {
-  static const String baseUrl = 'https://vetconnectmob-production.up.railway.app/api';
+  static const String baseUrl = 'http://10.0.2.2:8000/api';
 
   static Future<http.StreamedResponse> updateProfile({
     required String token,
@@ -21,7 +21,7 @@ class EditProfileService {
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['name'] = name;
     request.fields['email'] = email;
-    
+
     if (noTelp != null) request.fields['no_telp'] = noTelp;
     if (umur != null) request.fields['umur'] = umur.toString();
     if (alamat != null) request.fields['alamat'] = alamat;

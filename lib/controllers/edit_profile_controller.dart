@@ -1,13 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import '../services/edit_profile_api_service.dart';
+import '../services/profile_service.dart';
 
 class EditProfileController extends GetxController {
+  var isLoading = false.obs;
+  var selectedImage = Rxn<File>();
+
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
@@ -16,67 +15,35 @@ class EditProfileController extends GetxController {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  var isLoading = false.obs;
-  var selectedImage = Rx<File?>(null);
-  String token = '';
-
-  @override
-  void onInit() {
-    super.onInit();
-    loadToken();
+  void pickImage(File file) {
+    selectedImage.value = file;
   }
 
-  Future<void> loadToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token') ?? '';
-  }
-
-  void pickImage(File image) {
-    selectedImage.value = image;
-  }
-
-  Future<void> updateProfile(BuildContext context) async {
-    isLoading.value = true;
+  void updateProfile(BuildContext context) async {
     try {
-      final response = await EditProfileService.updateProfile(
-        token: token,
+      isLoading.value = true;
+
+      final success = await ProfileService.updateProfile(
         name: nameController.text,
         email: emailController.text,
         noTelp: phoneController.text,
-        umur: int.tryParse(ageController.text),
+        umur: ageController.text,
         alamat: addressController.text,
-        password: passwordController.text.isNotEmpty ? passwordController.text : null,
-        passwordConfirmation: confirmPasswordController.text.isNotEmpty
-            ? confirmPasswordController.text
-            : null,
+        password: passwordController.text,
+        confirmPassword: confirmPasswordController.text,
         profilePhoto: selectedImage.value,
       );
 
-      final result = await http.Response.fromStream(response);
-      final data = jsonDecode(result.body);
-
-      if (result.statusCode == 200 && data['success'] == true) {
-        Get.snackbar("Sukses", "Profil berhasil diperbarui");
-        Navigator.pop(context, true);
+      if (success) {
+        Get.back(result: true); // untuk trigger refresh di ProfilePage
+        Get.snackbar('Sukses', 'Profil berhasil diperbarui');
       } else {
-        Get.snackbar("Gagal", data['message'] ?? 'Gagal memperbarui profil');
+        Get.snackbar('Gagal', 'Profil gagal diperbarui');
       }
     } catch (e) {
-      Get.snackbar("Error", "Terjadi kesalahan: $e");
+      Get.snackbar('Error', 'Terjadi kesalahan: $e');
     } finally {
       isLoading.value = false;
     }
-  }
-
-  @override
-  void onClose() {
-    nameController.dispose();
-    emailController.dispose();
-    phoneController.dispose();
-    ageController.dispose();
-    addressController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.onClose();
   }
 }

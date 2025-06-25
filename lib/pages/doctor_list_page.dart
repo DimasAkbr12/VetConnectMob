@@ -1,73 +1,20 @@
+// pages/doctor_list_page.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/doctor.dart';
-import 'package:flutter_application_1/pages/detail_dokter.dart';
-import 'package:flutter_application_1/services/vet_api_service.dart';
+import 'package:get/get.dart';
+import 'package:flutter_application_1/controllers/vet_controller.dart';
+import 'package:flutter_application_1/pages/doctor_detail_page.dart';
 import 'package:flutter_application_1/widgets/dokter_card.dart';
 
-class DoctorListPage extends StatefulWidget {
-  const DoctorListPage({super.key});
+class DoctorListPage extends StatelessWidget {
+  final vetController = Get.put(VetController());
 
-  @override
-  State<DoctorListPage> createState() => _DoctorListPageState();
-}
-
-class _DoctorListPageState extends State<DoctorListPage> {
-  late Future<List<Dokter>> _doktersFuture;
-  List<Dokter> _allDokters = [];
-  List<Dokter> _filteredDokters = [];
-  bool _isDataLoaded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _doktersFuture = _fetchDokters();
-  }
-
-  Future<List<Dokter>> _fetchDokters() async {
-    try {
-      final response = await DokterService.getAllDokters();
-      if (response.success) {
-        _allDokters = response.data;
-        _filteredDokters = response.data;
-        _isDataLoaded = true;
-        return response.data;
-      } else {
-        return [];
-      }
-    } catch (e) {
-      print("Error fetching dokters: $e");
-      return [];
-    }
-  }
-
-  void _filterDokters(String query) {
-    if (!_isDataLoaded) return;
-    
-    setState(() {
-      if (query.isEmpty) {
-        _filteredDokters = _allDokters;
-      } else {
-        _filteredDokters = _allDokters
-            .where((dokter) =>
-                dokter.nama!.toLowerCase().contains(query.toLowerCase()))
-            .toList();
-      }
-    });
-  }
+  DoctorListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          'All Doctors',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: const Text('All Doctors', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.black)),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -78,6 +25,7 @@ class _DoctorListPageState extends State<DoctorListPage> {
         child: Column(
           children: [
             TextField(
+              onChanged: vetController.setSearchQuery,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 hintText: 'Search a Doctor',
@@ -88,50 +36,32 @@ class _DoctorListPageState extends State<DoctorListPage> {
                   borderSide: BorderSide.none,
                 ),
               ),
-              onChanged: _filterDokters,
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: FutureBuilder<List<Dokter>>(
-                future: _doktersFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Failed to load doctors: ${snapshot.error}'),
+              child: Obx(() {
+                if (vetController.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (vetController.isError.value) {
+                  return const Center(child: Text('Failed to load doctors.'));
+                }
+                final dokters = vetController.filteredDokters;
+                if (dokters.isEmpty) {
+                  return const Center(child: Text('No doctors found.'));
+                }
+                return ListView.builder(
+                  itemCount: dokters.length,
+                  itemBuilder: (context, index) {
+                    final dokter = dokters[index];
+                    return DokterCard(
+                      dokter: dokter,
+                      isCompact: false,
+                     onTap: () => Get.to(() => DoctorDetailPage(dokterId: dokter.id)),
                     );
-                  } else if (snapshot.data == null || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No doctors found.'));
-                  } else {
-                    // Use filtered list for display instead of original data
-                    final doktersToShow = _isDataLoaded ? _filteredDokters : snapshot.data!;
-                    
-                    if (doktersToShow.isEmpty && _isDataLoaded) {
-                      return const Center(child: Text('No doctors match your search.'));
-                    }
-                    
-                    return ListView.builder(
-                      itemCount: doktersToShow.length,
-                      itemBuilder: (context, index) {
-                        final dokter = doktersToShow[index];
-                        return DokterCard(
-                          dokter: dokter,
-                          isCompact: false,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetailPage(dokter: dokter),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
+                  },
+                );
+              }),
             ),
           ],
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/detail_dokter.dart';
+import 'package:flutter_application_1/pages/doctor_detail_page.dart';
 import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
 import '../models/doctor.dart';
@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    profileController.loadTokenAndProfile();
     _loadDokters();
   }
 
@@ -186,7 +185,8 @@ class _HomePageState extends State<HomePage> {
                                 context,
                                 MaterialPageRoute(
                                   builder:
-                                      (context) => DetailPage(dokter: dokter),
+                                      (context) =>
+                                          DoctorDetailPage(dokterId: dokter.id),
                                 ),
                               );
                             },

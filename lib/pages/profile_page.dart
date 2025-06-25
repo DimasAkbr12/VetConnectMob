@@ -1,35 +1,47 @@
+// profile_page.dart
+
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/profile_model.dart';
+import 'package:flutter_application_1/services/auth_service.dart';
+import 'package:flutter_application_1/utils/url_helper.dart';
 import 'package:get/get.dart';
-import 'package:flutter_application_1/controllers/profile_controller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../controllers/profile_controller.dart';
 
 class ProfilePage extends StatelessWidget {
   final ProfileController controller = Get.put(ProfileController());
-
+  
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       }
 
-      final data = controller.profileData;
+      final user = controller.profile.value;
+
+      if (user == null) {
+        return const Scaffold(
+          body: Center(child: Text("Data tidak ditemukan")),
+        );
+      }
 
       return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text(
             'My Profile',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-            }
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/home',
+                (route) => false,
+              );
+            },
           ),
           centerTitle: true,
           elevation: 0,
@@ -37,24 +49,29 @@ class ProfilePage extends StatelessWidget {
         body: Column(
           children: [
             const SizedBox(height: 20),
-            _buildProfileHeader(
-              name: data['name'] ?? '-',
-              email: data['email'] ?? '-',
-              phone: data['no_telp'] ?? '-',
-              fotoUrl: data['foto'],
-            ),
+            _buildProfileHeader(user),
             const SizedBox(height: 20),
             ListTile(
               leading: const Icon(Icons.person_outline),
               title: const Text('Edit Profile', style: TextStyle(fontSize: 16)),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () async {
-                final result = await Navigator.pushNamed(context, '/edit-profile');
+                final result = await Navigator.pushNamed(
+                  context,
+                  '/edit-profile',
+                );
                 if (result == true) {
-                  controller.loadProfile();
+                  controller.loadProfile(); // Refresh setelah edit
                 }
-              }
+              },
             ),
+            ListTile(
+              leading: const Icon(Icons.receipt),
+              title: const Text('Pesanan Saya'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () => Get.toNamed('/my-orders'),
+            ),
+
             const Spacer(),
             _buildLogoutButton(context),
             const SizedBox(height: 30),
@@ -64,33 +81,34 @@ class ProfilePage extends StatelessWidget {
     });
   }
 
-  Widget _buildProfileHeader({
-    required String name,
-    required String email,
-    required String phone,
-    String? fotoUrl,
-  }) {
+  Widget _buildProfileHeader(ProfileModel user) {
+    final photoUrl = UrlHelper.getFullImageUrl(user.foto);
+
     return Column(
       children: [
         CircleAvatar(
           radius: 40,
-          backgroundImage: fotoUrl != null && fotoUrl.isNotEmpty
-              ? NetworkImage(fotoUrl)
-              : const AssetImage('assets/images/profile.jpg') as ImageProvider,
+          backgroundImage:
+              (photoUrl.isNotEmpty)
+                  ? NetworkImage(photoUrl)
+                  : const AssetImage('assets/images/profile.jpg')
+                      as ImageProvider,
+          onBackgroundImageError: (_, __) {}, // Optional: suppress error logs
         ),
         const SizedBox(height: 10),
         Text(
-          name,
+          user.name,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         Text(
-          email,
+          user.email,
           style: const TextStyle(fontSize: 14, color: Colors.grey),
         ),
-        Text(
-          phone,
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
-        ),
+        if (user.noTelp != null)
+          Text(
+            user.noTelp!,
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
+          ),
       ],
     );
   }
@@ -98,10 +116,11 @@ class ProfilePage extends StatelessWidget {
   Widget _buildLogoutButton(BuildContext context) {
     return TextButton(
       onPressed: () async {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.remove('token');
-        if (context.mounted) {
+        try {
+          await AuthService.logout();
           Get.offAllNamed('/sign-in');
+        } catch (e) {
+          Get.snackbar("Logout Gagal", e.toString());
         }
       },
       child: const Text(

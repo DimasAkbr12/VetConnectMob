@@ -1,32 +1,24 @@
-import 'dart:convert';
-
-
-class Article {
+class ArticleDetailModel {
   final int id;
-  final int vetId;
   final String judul;
   final String isi;
   final List<String> gambar;
   final DateTime createdAt;
 
-
-  Article({
+  ArticleDetailModel({
     required this.id,
-    required this.vetId,
     required this.judul,
     required this.isi,
     required this.gambar,
     required this.createdAt,
   });
 
-
-  factory Article.fromJson(Map<String, dynamic> json) {
-    return Article(
+  factory ArticleDetailModel.fromJson(Map<String, dynamic> json) {
+    return ArticleDetailModel(
       id: json['id'],
-      vetId: json['vet_id'],
       judul: json['judul'],
       isi: json['isi'],
-      gambar: List<String>.from(jsonDecode(json['gambar'])), // decode string to List<String>
+      gambar: [json['gambar']], // jika hanya 1 gambar
       createdAt: DateTime.parse(json['created_at']),
     );
   }

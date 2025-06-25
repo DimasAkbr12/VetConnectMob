@@ -15,12 +15,14 @@ class BookingRequest {
     required this.metodePembayaran,
   });
 
-  Map<String, dynamic> toJson() => {
-        'vet_id': vetId,
-        'vet_date_id': vetDateId,
-        'vet_time_id': vetTimeId,
-        'keluhan': keluhan,
-        'total_harga': totalHarga,
-        'metode_pembayaran': metodePembayaran,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'vet_id': vetId,
+      'vet_date_id': vetDateId,
+      'vet_time_id': vetTimeId,
+      'keluhan': keluhan,
+      'total_harga': totalHarga,
+      'metode_pembayaran': metodePembayaran,
+    };
+  }
 }

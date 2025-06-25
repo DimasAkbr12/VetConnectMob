@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/my_order_page.dart';
 import 'package:flutter_application_1/pages/notification_page.dart';
+import 'package:flutter_application_1/pages/order_detail_page.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/pages/create_new_password.dart';
 import 'package:flutter_application_1/pages/doctor_list_page.dart';
@@ -46,6 +48,8 @@ class MyApp extends StatelessWidget {
         '/edit-profile': (context) => EditProfilePage(),
         '/log-out': (context) => SignInPage(),
         '/notification': (context) => NotificationPage(),
+        '/my-orders' : (context)=> MyOrderPage(),
+        '/order-detail': (context)=> OrderDetailPage(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => const Scaffold(

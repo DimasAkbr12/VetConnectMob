@@ -4,13 +4,10 @@ import '../controllers/article_controller.dart';
 import '../pages/detail_article.dart';
 import '../widgets/bottom_nav_bar.dart';
 
-
 class ArticlePage extends StatelessWidget {
   final ArticleController controller = Get.put(ArticleController());
 
-
   ArticlePage({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +35,13 @@ class ArticlePage extends StatelessWidget {
             _buildSearchBar(),
             Expanded(
               child: Obx(() {
-                if (controller.isLoading.value) {
+                if (controller.isLoadingList.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
-
 
                 if (controller.articles.isEmpty) {
                   return const Center(child: Text('Tidak ada artikel.'));
                 }
-
 
                 return ListView.builder(
                   itemCount: controller.articles.length,
@@ -54,9 +49,8 @@ class ArticlePage extends StatelessWidget {
                     final article = controller.articles[index];
                     return _buildArticleCard(
                       context,
-                      imageUrl: article.gambar.isNotEmpty
-                          ? article.gambar.first
-                          : '', // fallback jika kosong
+                      id: article.id,
+                      imageUrl: article.gambar,
                       title: article.judul,
                     );
                   },
@@ -72,7 +66,6 @@ class ArticlePage extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildSearchBar() {
     return Container(
@@ -92,22 +85,18 @@ class ArticlePage extends StatelessWidget {
     );
   }
 
-
   Widget _buildArticleCard(
     BuildContext context, {
+    required int id,
     required String imageUrl,
     required String title,
   }) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        await controller.fetchArticleDetail(id);
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => ArticleDetailPage(
-              title: title,
-              image: imageUrl,
-            ),
-          ),
+          MaterialPageRoute(builder: (_) => const ArticleDetailPage()),
         );
       },
       child: Padding(
@@ -127,12 +116,15 @@ class ArticlePage extends StatelessWidget {
                   top: Radius.circular(12),
                 ),
                 child: Image.network(
-                  imageUrl,
+                  imageUrl.startsWith('/')
+                      ? 'http://10.0.2.2:8000$imageUrl'
+                      : imageUrl,
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.broken_image, size: 150),
+                  errorBuilder:
+                      (context, error, stackTrace) =>
+                          const Icon(Icons.broken_image, size: 150),
                 ),
               ),
               Padding(

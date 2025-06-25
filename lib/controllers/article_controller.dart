@@ -1,30 +1,35 @@
+import 'package:flutter_application_1/models/article_detail.dart';
 import 'package:get/get.dart';
-import '../models/article.dart';
-import '../services/getarticle_api_service.dart';
-
+import '../models/article_list_item.dart';
+import '../services/article_service.dart';
 
 class ArticleController extends GetxController {
-  var isLoading = true.obs;
-  var articles = <Article>[].obs;
-
-
+  var articles = <ArticleListItemModel>[].obs;
+  var isLoadingList = false.obs;
+  var articleDetail = Rxn<ArticleDetailModel>();
   @override
   void onInit() {
     super.onInit();
     fetchArticles();
   }
 
-
   void fetchArticles() async {
     try {
-      isLoading(true);
-      final fetchedArticles = await ArticleApiService.fetchArticles();
-      articles.assignAll(fetchedArticles);
+      isLoadingList.value = true;
+      final result = await ArticleService.fetchArticles();
+      articles.value = result;
     } catch (e) {
-      Get.snackbar('Error', e.toString());
-      articles.clear(); // Clear jika error
+      Get.snackbar('Error', 'Gagal memuat artikel');
     } finally {
-      isLoading(false);
+      isLoadingList.value = false;
+    }
+  }
+
+  Future<void> fetchArticleDetail(int id) async {
+    try {
+      articleDetail.value = await ArticleService.fetchArticleDetail(id);
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memuat detail artikel');
     }
   }
 }

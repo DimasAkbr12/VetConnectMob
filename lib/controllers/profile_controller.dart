@@ -1,40 +1,44 @@
-import 'package:flutter/material.dart';
+// controllers/profile_controller.dart
 import 'package:get/get.dart';
-import 'package:flutter_application_1/services/profile_service.dart';
+import 'package:flutter_application_1/models/profile_model.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class ProfileController extends GetxController {
-  final ProfileService _service = ProfileService();
-
-  var isLoading = false.obs;
-  var profileData = {}.obs;
-  String token = '';
+  var profile = Rx<ProfileModel?>(null);
+  var isLoading = true.obs;
 
   @override
   void onInit() {
     super.onInit();
-    loadTokenAndProfile();
-  }
-
-  Future<void> loadTokenAndProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token') ?? '';
-    if (token.isNotEmpty) {
-      await loadProfile();
-    }
+    loadProfile();
   }
 
   Future<void> loadProfile() async {
     try {
       isLoading.value = true;
-      final data = await _service.getProfile(token);
-      profileData.value = data;
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/api/profile'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        profile.value = ProfileModel.fromJson(data['data']);
+      } else {
+        print('Failed to fetch profile: ${response.statusCode}');
+      }
     } catch (e) {
-      debugPrint('Error loading profile: $e');
+      print('Error: $e');
     } finally {
       isLoading.value = false;
     }
   }
-
-  void getMyProfil(double e) {}
 }
